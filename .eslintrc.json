@@ -1,0 +1,30 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
+  "extends": [
+    "airbnb-base"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "globals": {
+    "App": true,
+    "Page": true,
+    "Component": true,
+    "Behavior": true,
+    "wx": true,
+    "getApp": true,
+    "getCurrentPages": true
+  },
+  "rules": {
+    "import/no-extraneous-dependencies": "off",
+    "linebreak-style": "off",
+    "no-multi-assign": "off",
+    "no-underscore-dangle": "off",
+    "no-param-reassign": "off"
+  }
+}
