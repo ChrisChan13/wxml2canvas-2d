@@ -134,7 +134,6 @@ const filePath = await canvas.toTempFilePath();
     </tr>
   </table>
 </details>
-<br>
 <details>
   <summary><b>TODOs</b></summary>
   <br>
