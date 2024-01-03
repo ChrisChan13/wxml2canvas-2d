@@ -14,6 +14,7 @@
           <view class="canvas-hint wxml2canvas-item" data-text="扫描左侧二维码">扫描左侧二维码</view>
         </view>
       </view>
+      <view class="canvas-bar wxml2canvas-item" />
       <view class="canvas-badge wxml2canvas-item" />
     </view>
   </view>

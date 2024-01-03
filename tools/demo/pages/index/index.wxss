@@ -95,6 +95,13 @@
   font-size: 20rpx;
   color: #AFAFAF;
 }
+.canvas-bar {
+  margin-top: 20rpx;
+  width: 100%;
+  height: 50rpx;
+  border-radius: 20rpx;
+  background: linear-gradient(30deg, #CCDCEE 20rpx, #3AA5FF 40rpx, #CCDCEE, #008AFE 40% 50%, #3AA5FF 50%, #CCDCEE);
+}
 .canvas-badge {
   position: absolute;
   left: 20rpx;

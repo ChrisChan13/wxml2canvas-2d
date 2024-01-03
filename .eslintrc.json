@@ -22,6 +22,8 @@
   },
   "rules": {
     "import/no-extraneous-dependencies": "off",
+    "no-plusplus": "off",
+    "no-continue": "off",
     "linebreak-style": "off",
     "no-multi-assign": "off",
     "no-underscore-dangle": "off",
