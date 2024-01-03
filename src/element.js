@@ -142,45 +142,45 @@ class Element {
     let [rightBottom, bottomRight] = this['border-bottom-right-radius'].split(' ');
 
     if (/%/.test(topLeft ?? leftTop)) {
-      topLeft = this.height * (parseFloat(topLeft ?? leftTop, '%') / 100);
+      topLeft = this.height * (parseFloat(topLeft ?? leftTop) / 100);
     } else {
       topLeft = parseFloat(topLeft ?? leftTop);
     }
     if (/%/.test(leftTop)) {
-      leftTop = this.width * (parseFloat(leftTop, '%') / 100);
+      leftTop = this.width * (parseFloat(leftTop) / 100);
     } else {
       leftTop = parseFloat(leftTop);
     }
 
     if (/%/.test(topRight ?? rightTop)) {
-      topRight = this.height * (parseFloat(topRight ?? rightTop, '%') / 100);
+      topRight = this.height * (parseFloat(topRight ?? rightTop) / 100);
     } else {
       topRight = parseFloat(topRight ?? rightTop);
     }
     if (/%/.test(rightTop)) {
-      rightTop = this.width * (parseFloat(rightTop, '%') / 100);
+      rightTop = this.width * (parseFloat(rightTop) / 100);
     } else {
       rightTop = parseFloat(rightTop);
     }
 
     if (/%/.test(bottomLeft ?? leftBottom)) {
-      bottomLeft = this.height * (parseFloat(bottomLeft ?? leftBottom, '%') / 100);
+      bottomLeft = this.height * (parseFloat(bottomLeft ?? leftBottom) / 100);
     } else {
       bottomLeft = parseFloat(bottomLeft ?? leftBottom);
     }
     if (/%/.test(leftBottom)) {
-      leftBottom = this.width * (parseFloat(leftBottom, '%') / 100);
+      leftBottom = this.width * (parseFloat(leftBottom) / 100);
     } else {
       leftBottom = parseFloat(leftBottom);
     }
 
     if (/%/.test(bottomRight ?? rightBottom)) {
-      bottomRight = this.height * (parseFloat(bottomRight ?? rightBottom, '%') / 100);
+      bottomRight = this.height * (parseFloat(bottomRight ?? rightBottom) / 100);
     } else {
       bottomRight = parseFloat(bottomRight ?? rightBottom);
     }
     if (/%/.test(rightBottom)) {
-      rightBottom = this.width * (parseFloat(rightBottom, '%') / 100);
+      rightBottom = this.width * (parseFloat(rightBottom) / 100);
     } else {
       rightBottom = parseFloat(rightBottom);
     }

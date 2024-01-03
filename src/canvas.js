@@ -328,6 +328,7 @@ class Canvas {
     ctx.shadowBlur = shadow.blur;
     ctx.shadowOffsetX = shadow.offsetX;
     ctx.shadowOffsetY = shadow.offsetY;
+    // 必须填充背景色，否则阴影不可见
     ctx.fillStyle = `rgba(${background.rColor}, ${background.gColor}, ${background.bColor}, 1)`;
     ctx.fill(this.getElementPath2D());
     ctx.shadowColor = 'rgba(0, 0, 0, 0)';
