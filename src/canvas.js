@@ -43,7 +43,7 @@ const genLinearGradient = (ctx, element) => {
   let [angle] = matched.match(/(-?\d+(\.\d+)?(turn|deg|grad|rad))|(to( (left|top|bottom|right))+)/) ?? [];
   if (/\d+(\.\d+)?(turn|deg|grad|rad)/.test(angle)) {
     let roundAngle = 360; // 当前单位 的一个完整圆的数值，默认单位：度
-    let angleRatio = 1; // 度单位 与 当前单位 的单位换算比例，默认单位：度
+    let angleRatio = 1; // 角度单位 与 当前单位 的单位换算比例，默认单位：度
     if (/turn/.test(angle)) { // 圈数
       roundAngle = 1;
       angleRatio = 360 / roundAngle;
@@ -72,11 +72,11 @@ const genLinearGradient = (ctx, element) => {
   } else { // 默认 180 度角，即从上往下
     angle = 180;
   }
-  // 渐变线上代表起始颜色值的点
+  // 渐变射线上代表起始颜色值的点
   const startPoint = [];
-  // 渐变线上代表最终颜色值的点
+  // 渐变射线上代表最终颜色值的点
   const endPoint = [];
-  // 渐变线长度
+  // 渐变射线长度
   let gradientDiagonal = 0;
   // 渐变角度是否为钝角
   const isObtuse = Math.abs(angle) > 90;
@@ -112,7 +112,7 @@ const genLinearGradient = (ctx, element) => {
     (isObtuse ? element.bottom : element.top) + pointDiffY,
   );
   const gradient = ctx.createLinearGradient(...startPoint, ...endPoint);
-  // 渐变颜色点位集合
+  // 渐变色标位置集合
   let stops = matched.match(/(rgba?\(((, )?\d+(\.\d+)?)+\)( \d+(\.\d+)?(px|%))*)|(\d+(\.\d+)?(px|%))/g) ?? [];
   stops = stops.map((term) => {
     const [color] = term.match(/rgba?\(((, )?\d+(\.\d+)?)+\)/) ?? [];
@@ -147,9 +147,9 @@ const genLinearGradient = (ctx, element) => {
       } else {
         let perInter = 1;
         let stpIndex = index;
-        // 上一个渐变颜色位置
+        // 上一个渐变色标位置
         const [perStart] = stops[stpIndex - 1].percent.slice(-1);
-        // 下一个渐变颜色位置
+        // 下一个渐变色标位置
         let perEnd;
         while (++stpIndex < stops.length) {
           perInter += 1;
@@ -158,7 +158,7 @@ const genLinearGradient = (ctx, element) => {
             break;
           }
         }
-        // 当前渐变颜色渐变位置
+        // 当前渐变色标位置
         const percent = [perStart + ((perEnd ?? 1) - perStart) / perInter];
         Object.assign(term, {
           percent,
