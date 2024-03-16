@@ -263,13 +263,13 @@ class Canvas {
     ctx.beginPath();
     if (element['border-radius'] !== '0px') {
       const radius = element.getBorderRadius();
-      const unitStartAngle = IS_IOS ? 1 : Math.PI / 180;
+      const unitRotateAngle = IS_IOS ? 1 : Math.PI / 180;
       ctx.ellipse(
         element.left + radius.leftTop,
         element.top + radius.topLeft,
         radius.leftTop,
         radius.topLeft,
-        -180 * unitStartAngle,
+        -180 * unitRotateAngle,
         0,
         Math.PI / 2,
       );
@@ -279,7 +279,7 @@ class Canvas {
         element.top + radius.topRight,
         radius.topRight,
         radius.rightTop,
-        -90 * unitStartAngle,
+        -90 * unitRotateAngle,
         0,
         Math.PI / 2,
       );
@@ -299,7 +299,7 @@ class Canvas {
         element.bottom - radius.bottomLeft,
         radius.bottomLeft,
         radius.leftBottom,
-        90 * unitStartAngle,
+        90 * unitRotateAngle,
         0,
         Math.PI / 2,
       );
