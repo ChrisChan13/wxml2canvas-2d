@@ -19,28 +19,46 @@ npm i wxml2canvas-2d -S --production
 
 ## 使用
 
-1. 在页面中编写 wxml 结构，将要生成画布内容的**根节点**用名为 `wxml2canvas-container` 的样式类名称标记，将该根节点内部**需要生成画布内容的节点**用名为 `wxml2canvas-item` 的样式类名称标记（文字类节点需在对应节点声明 `data-text` 属性，并传入文字内容）。上述两个样式类名称可以自定义，只需将对应名称传入 `wxml2canvas` 组件的对应属性参数即可；
+1. 在页面配置中引入 `wxml2canvas-2d` ;
+```json
+{
+  "usingComponents": {
+    "wxml2canvas": "wxml2canvas-2d"
+  }
+}
+```
+2. 在页面中编写 wxml 结构，将要生成画布内容的**根节点**用名为 `wxml2canvas-container` 的样式类名称标记，将该根节点内部**需要生成画布内容的节点**用名为 `wxml2canvas-item` 的样式类名称标记（文字类节点需在对应节点声明 `data-text` 属性，并传入文字内容）。上述两个样式类名称可以自定义，只需将对应名称传入 `wxml2canvas` 组件的对应属性参数即可；
 ```html
 <view class="wxml2canvas-container box">
   <view class="wxml2canvas-item title" data-text="测试标题">测试标题</view>
-  <image class="wxml2canvas-item image" src="/your-image-path.png" />
+  <image class="wxml2canvas-item image" src="/paste-your-image-path-here.png" />
   <view class="wxml2canvas-item content" data-text="测试内容，长文本。。">测试内容，长文本。。</view>
 </view>
+<button catchtap="generateSharingCard">生成画布内容</button>
 <wxml2canvas id="wxml2canvas" />
 ```
-2. 补充各个节点样式；
+3. 补充各个节点样式；
 ```css
-.box { /* 根节点（容器）的样式 */ }
+.box { background: aliceblue; /* 根节点（容器）的样式 */ }
 .title { /* 标题的样式 */ }
 .image { /* 图片的样式 */ }
 .content { /* 内容的样式 */ }
 ```
-3. 依据 wxml 结构以及 css 样式，生成画布内容，并将生成结果导出。
+4. 依据 wxml 结构以及 css 样式，生成画布内容，并将生成结果导出。
 ```javascript
-const canvas = this.selectComponent('#wxml2canvas');
-await canvas.draw();
-const filePath = await canvas.toTempFilePath();
+Page({
+  async generateSharingCard() {
+    const canvas = this.selectComponent('#wxml2canvas');
+    await canvas.draw();
+    const filePath = await canvas.toTempFilePath();
+    wx.previewImage({
+      urls: [filePath],
+    });
+  },
+});
 ```
+
+> **PS**：使用字体时，请注意在**生成画布内容前** [**加载对应的字体文件**](https://developers.weixin.qq.com/miniprogram/dev/api/ui/font/wx.loadFontFace.html)；
 
 ## API
 
