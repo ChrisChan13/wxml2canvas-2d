@@ -11,14 +11,6 @@ class Element {
     Object.assign(this, nodesRef);
   }
 
-  /**
-   * 设置 wxml 元素的边框路径
-   * @param {Path2D} path2D 元素的边框路径
-   */
-  setPath2D(path2D) {
-    this.path2D = path2D;
-  }
-
   /** 获取 wxml 元素的内容盒子大小数据 */
   getBoxSize() {
     if (this.__content) return this.__content;

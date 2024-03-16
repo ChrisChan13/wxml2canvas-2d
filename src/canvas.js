@@ -5,6 +5,13 @@ const LINE_HEIGHT_OFFSET = 0.11;
 // 字体大小位置校准
 const FONT_SIZE_OFFSET = 0.08;
 
+const {
+  platform: SYS_PLATFORM,
+  pixelRatio: SYS_DPR,
+} = wx.getSystemInfoSync();
+// 是否为 iOS 平台
+const IS_IOS = SYS_PLATFORM === 'ios';
+
 /**
  * 获取画布对象
  * @param {ComponentObject} component 组件实例对象
@@ -212,8 +219,7 @@ class Canvas {
    */
   async init(container, scale = 1) {
     const canvas = this.canvas = await getCanvas(this.component, this.selector);
-    const { pixelRatio: dpr } = wx.getSystemInfoSync();
-    scale *= dpr;
+    scale *= SYS_DPR;
     canvas.width = container.width * scale;
     canvas.height = container.height * scale;
     const ctx = this.context = canvas.getContext('2d');
@@ -251,37 +257,34 @@ class Canvas {
     this.context.save();
   }
 
-  /**
-   * 生成/获取 wxml 元素的边框路径
-   * @returns {Path2D} 路径
-   */
-  getElementPath2D() {
-    const { element } = this;
-    if (element.path2D) return element.path2D;
-    const borderPath = this.canvas.createPath2D();
+  /** 生成 wxml 元素的边框路径 */
+  genElementPath() {
+    const { context: ctx, element } = this;
+    ctx.beginPath();
     if (element['border-radius'] !== '0px') {
       const radius = element.getBorderRadius();
-      borderPath.ellipse(
+      const unitStartAngle = IS_IOS ? 1 : Math.PI / 180;
+      ctx.ellipse(
         element.left + radius.leftTop,
         element.top + radius.topLeft,
         radius.leftTop,
         radius.topLeft,
-        -Math.PI,
+        -180 * unitStartAngle,
         0,
         Math.PI / 2,
       );
-      borderPath.lineTo(element.right - radius.rightTop, element.top);
-      borderPath.ellipse(
+      ctx.lineTo(element.right - radius.rightTop, element.top);
+      ctx.ellipse(
         element.right - radius.rightTop,
         element.top + radius.topRight,
         radius.topRight,
         radius.rightTop,
-        -Math.PI / 2,
+        -90 * unitStartAngle,
         0,
         Math.PI / 2,
       );
-      borderPath.lineTo(element.right, element.bottom - radius.bottomRight);
-      borderPath.ellipse(
+      ctx.lineTo(element.right, element.bottom - radius.bottomRight);
+      ctx.ellipse(
         element.right - radius.rightBottom,
         element.bottom - radius.bottomRight,
         radius.rightBottom,
@@ -290,32 +293,32 @@ class Canvas {
         0,
         Math.PI / 2,
       );
-      borderPath.lineTo(element.right - radius.rightBottom, element.bottom);
-      borderPath.ellipse(
+      ctx.lineTo(element.right - radius.rightBottom, element.bottom);
+      ctx.ellipse(
         element.left + radius.leftBottom,
         element.bottom - radius.bottomLeft,
         radius.bottomLeft,
         radius.leftBottom,
-        Math.PI / 2,
+        90 * unitStartAngle,
         0,
         Math.PI / 2,
       );
-      borderPath.lineTo(element.left, element.top + radius.topLeft);
+      ctx.lineTo(element.left, element.top + radius.topLeft);
     } else {
-      borderPath.rect(
+      ctx.rect(
         element.left,
         element.top,
         element.width,
         element.height,
       );
     }
-    element.setPath2D(borderPath);
-    return borderPath;
+    ctx.closePath();
   }
 
   /** 设置 wxml 元素的边界 */
   setElementBoundary() {
-    this.context.clip(this.getElementPath2D());
+    this.genElementPath();
+    this.context.clip();
   }
 
   /** 绘制 wxml 元素的背景 */
@@ -482,7 +485,8 @@ class Canvas {
       ctx.lineDashOffset = -border.width * 2;
       ctx.setLineDash([2 * border.width, border.width]);
     }
-    ctx.stroke(this.getElementPath2D());
+    this.genElementPath();
+    ctx.stroke();
   }
 
   /** 绘制 wxml 元素阴影 */
@@ -496,7 +500,8 @@ class Canvas {
     ctx.shadowOffsetY = shadow.offsetY;
     // 必须填充背景色，否则阴影不可见
     ctx.fillStyle = `rgba(${background.rColor}, ${background.gColor}, ${background.bColor}, 1)`;
-    ctx.fill(this.getElementPath2D());
+    this.genElementPath();
+    ctx.fill();
     ctx.shadowColor = 'rgba(0, 0, 0, 0)';
     ctx.shadowBlur = 0;
     ctx.shadowOffsetX = 0;
