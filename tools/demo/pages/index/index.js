@@ -24,11 +24,15 @@ Page({
     this.setData({ isCompare: false });
   },
   async onLoadFontFace() {
+    wx.showLoading({
+      title: '加载字体..',
+    });
     await wx.loadFontFace({
       family: 'QianTuXianMoTi',
       source: 'https://qnvotes.yolewa.com/QianTuXianMoTi-2.ttf',
       scopes: ['webview', 'native'],
     });
+    wx.hideLoading();
     this.onDrawCanvas();
   },
 });
