@@ -159,6 +159,7 @@ Page({
   - [ ] 支持 background-image 等背景图片样式
   - [ ] 支持渐变类 background，Gradients
   - [ ] 支持多重 background，多重 box-shadow
+  - [ ] 支持渐变类 Gradients 插值提示
 </details>
 
 ## Demo

@@ -1,3 +1,5 @@
+import { createGradient } from './gradient';
+
 // 默认行高
 const DEFAULT_LINE_HEIGHT = 1.35;
 // 行高位置校准
@@ -29,158 +31,6 @@ const getCanvas = (component, selector) => new Promise(
     });
   },
 );
-
-/**
- * 生成线性渐变对象
- * @param {CanvasRenderingContext2D} ctx 画布上下文
- * @param {Element} element wxml 元素
- * @returns {CanvasGradient} 渐变对象
- */
-const genLinearGradient = (ctx, element) => {
-  const [matched] = element['background-image'].match(
-    // 线性渐变语法参考：https://developer.mozilla.org/zh-CN/docs/Web/CSS/gradient/linear-gradient#%E5%BD%A2%E5%BC%8F%E8%AF%AD%E6%B3%95
-    /linear-gradient\(((-?\d+(\.\d+)?(turn|deg|grad|rad))|(to( (left|top|bottom|right))+))?((, )?((rgba?\(((, )?\d+(\.\d+)?)+\)( \d+(\.\d+)?(px|%))*)|(\d+(\.\d+)?(px|%))))+\)/,
-  ) ?? [];
-  if (!matched) return undefined;
-  // 三角函数值 转换 弧度 换算比例
-  const tri2radRatio = Math.PI / 180;
-  // 矩形斜边长度
-  const diagonal = Math.sqrt(element.width ** 2 + element.height ** 2);
-  // 角度描述内容
-  let [angle] = matched.match(/(-?\d+(\.\d+)?(turn|deg|grad|rad))|(to( (left|top|bottom|right))+)/) ?? [];
-  if (/\d+(\.\d+)?(turn|deg|grad|rad)/.test(angle)) {
-    let roundAngle = 360; // 当前单位 的一个完整圆的数值，默认单位：度
-    let angleRatio = 1; // 角度单位 与 当前单位 的单位换算比例，默认单位：度
-    if (/turn/.test(angle)) { // 圈数
-      roundAngle = 1;
-      angleRatio = 360 / roundAngle;
-    } else if (/grad/.test(angle)) { // 百分度数
-      roundAngle = 400;
-      angleRatio = 360 / roundAngle;
-    } else if (/rad/.test(angle)) { // 弧度数
-      roundAngle = 2 * Math.PI;
-      angleRatio = 180 / Math.PI;
-    }
-    angle = angleRatio * (parseFloat(angle) % roundAngle);
-    // 超过 180 度转换为 逆时针角度
-    if (angle > 180) angle = -(360 - angle);
-  } else if (angle === 'to left') { // 从右往左
-    angle = -90;
-  } else if (angle === 'to right') { // 从左往右
-    angle = 90;
-  } else if (angle === 'to top') { // 从下往上
-    angle = 0;
-  } else if (/( (left|top|bottom|right)){2}/.test(angle)) { // 斜上 或 斜下，对角方向
-    angle = (
-      /left/.test(angle) ? -1 : 1 // 左方向，转换为 逆时针角度
-    ) * (90 + (
-      /top/.test(angle) ? -1 : 1 // 上方向，锐角角度
-    ) * (Math.atan(element.width / element.height) / tri2radRatio));
-  } else { // 默认 180 度角，即从上往下
-    angle = 180;
-  }
-  // 渐变射线上代表起始颜色值的点
-  const startPoint = [];
-  // 渐变射线上代表最终颜色值的点
-  const endPoint = [];
-  // 渐变射线长度
-  let gradientDiagonal = 0;
-  // 渐变角度是否为钝角
-  const isObtuse = Math.abs(angle) > 90;
-  // 渐变角度是否顺时针
-  const isClockwise = angle >= 0;
-  // 渐变角度 与 水平线 的夹角（小角）
-  const gradientAngle = 90 - (
-    isObtuse
-      ? (180 - Math.abs(angle))
-      : Math.abs(angle)
-  );
-  // 渐变角度 与 对角线 的夹角（小角）
-  const angleDiff = Math.abs(angle) - Math.abs(
-    isObtuse
-      ? 90 + Math.atan(element.height / element.width) / tri2radRatio
-      : Math.atan(element.width / element.height) / tri2radRatio,
-  );
-  // 渐变起始点的斜边长度
-  const pointDiagonal = Math.sin(angleDiff * tri2radRatio) * (diagonal / 2);
-  // 渐变起始点的 x 坐标
-  const pointDiffX = Math.sin(gradientAngle * tri2radRatio) * pointDiagonal;
-  // 渐变起始点的 y 坐标
-  const pointDiffY = Math.cos(gradientAngle * tri2radRatio) * pointDiagonal;
-  gradientDiagonal = Math.cos(angleDiff * tri2radRatio) * diagonal;
-  startPoint.push(
-    (isClockwise ? element.left : element.right)
-      + (isObtuse ? 1 : -1) * (isClockwise ? 1 : -1) * pointDiffX,
-    (isObtuse ? element.top : element.bottom) - pointDiffY,
-  );
-  endPoint.push(
-    (isClockwise ? element.right : element.left)
-      + (isObtuse ? -1 : 1) * (isClockwise ? 1 : -1) * pointDiffX,
-    (isObtuse ? element.bottom : element.top) + pointDiffY,
-  );
-  const gradient = ctx.createLinearGradient(...startPoint, ...endPoint);
-  // 渐变色标位置集合
-  let stops = matched.match(/(rgba?\(((, )?\d+(\.\d+)?)+\)( \d+(\.\d+)?(px|%))*)|(\d+(\.\d+)?(px|%))/g) ?? [];
-  stops = stops.map((term) => {
-    const [color] = term.match(/rgba?\(((, )?\d+(\.\d+)?)+\)/) ?? [];
-    const payload = {};
-    if (color) {
-      Object.assign(payload, { color });
-    }
-    const dots = term.match(/\d+(\.\d+)?(px|%)/g) ?? [];
-    if (dots) {
-      Object.assign(payload, {
-        percent: dots.map((dot) => {
-          if (/px/.test(dot)) {
-            return parseFloat(dot) / gradientDiagonal;
-          } if (/%/.test(dot)) {
-            return parseFloat(dot) / 100;
-          }
-          return 0;
-        }),
-      });
-    }
-    return payload;
-  });
-  for (let index = 0; index < stops.length; index++) {
-    const term = stops[index];
-    // 不支持控制渐变进程
-    if (!term.color) continue;
-    if (term.percent.length === 0) {
-      if (index === 0) {
-        Object.assign(term, { percent: [0] });
-      } else if (index === stops.length - 1) {
-        Object.assign(term, { percent: [1] });
-      } else {
-        let perInter = 1;
-        let stpIndex = index;
-        // 上一个渐变色标位置
-        const [perStart] = stops[stpIndex - 1].percent.slice(-1);
-        // 下一个渐变色标位置
-        let perEnd;
-        while (++stpIndex < stops.length) {
-          perInter += 1;
-          if (stops[stpIndex].percent.length > 0) {
-            [perEnd] = stops[stpIndex].percent;
-            break;
-          }
-        }
-        // 当前渐变色标位置
-        const percent = [perStart + ((perEnd ?? 1) - perStart) / perInter];
-        Object.assign(term, {
-          percent,
-        });
-      }
-    }
-    let perIndex = 0;
-    for (; perIndex < term.percent.length; perIndex++) {
-      if (term.percent[perIndex] > 1) break;
-      gradient.addColorStop(term.percent[perIndex], term.color);
-    }
-    if (perIndex < term.percent.length) break;
-  }
-  return gradient;
-};
 
 /**
  * 画布工具类
@@ -257,8 +107,8 @@ class Canvas {
     this.context.save();
   }
 
-  /** 生成 wxml 元素的边框路径 */
-  genElementPath() {
+  /** 绘制/裁切 wxml 元素的边框路径 */
+  clipElementPath() {
     const { context: ctx, element } = this;
     ctx.beginPath();
     if (element['border-radius'] !== '0px') {
@@ -317,7 +167,7 @@ class Canvas {
 
   /** 设置 wxml 元素的边界 */
   setElementBoundary() {
-    this.genElementPath();
+    this.clipElementPath();
     this.context.clip();
   }
 
@@ -326,12 +176,7 @@ class Canvas {
     const { context: ctx, element } = this;
     ctx.fillStyle = element['background-color'];
     ctx.fillRect(element.left, element.top, element.width, element.height);
-
-    if (element['background-image'] === 'none') return;
-    let gradient;
-    if (element['background-image'].startsWith('linear-gradient')) {
-      gradient = genLinearGradient(ctx, element);
-    }
+    const gradient = createGradient(ctx, element);
     if (!gradient) return;
     ctx.fillStyle = gradient;
     ctx.fillRect(
@@ -485,7 +330,7 @@ class Canvas {
       ctx.lineDashOffset = -border.width * 2;
       ctx.setLineDash([2 * border.width, border.width]);
     }
-    this.genElementPath();
+    this.clipElementPath();
     ctx.stroke();
   }
 
@@ -500,7 +345,7 @@ class Canvas {
     ctx.shadowOffsetY = shadow.offsetY;
     // 必须填充背景色，否则阴影不可见
     ctx.fillStyle = `rgba(${background.rColor}, ${background.gColor}, ${background.bColor}, 1)`;
-    this.genElementPath();
+    this.clipElementPath();
     ctx.fill();
     ctx.shadowColor = 'rgba(0, 0, 0, 0)';
     ctx.shadowBlur = 0;
