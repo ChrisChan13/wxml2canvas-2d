@@ -14,7 +14,6 @@ class Element {
   /** 获取 wxml 元素的内容盒子大小数据 */
   getBoxSize() {
     if (this.__content) return this.__content;
-    const { width: borderWidth } = this.getBorder();
     const padLeft = parseFloat(this['padding-left']);
     const padTop = parseFloat(this['padding-top']);
     const padRight = parseFloat(this['padding-right']);
@@ -25,6 +24,7 @@ class Element {
     let offsetBottom = this.bottom - padBottom;
     let offsetWidth = this.width - padLeft - padRight;
     let offsetHeight = this.height - padTop - padBottom;
+    const { width: borderWidth } = this.getBorder();
     if (borderWidth > 0) {
       offsetLeft += borderWidth;
       offsetTop += borderWidth;
@@ -177,7 +177,7 @@ class Element {
       rightBottom = parseFloat(rightBottom);
     }
 
-    // 各个圆角的缩放比例
+    /** 各个圆角的缩放比例 */
     let rScale;
     if (
       (leftTop + rightTop) > this.width
@@ -217,9 +217,9 @@ class Element {
   }
 }
 
-// 节点通用属性名
+/** 节点通用属性名 */
 Element.COMMON_PROPERTIES = [];
-// 节点通用样式名
+/** 节点通用样式名 */
 Element.COMMON_COMPUTED_STYLE = [
   'background-color', 'border-radius', 'background-image',
   'padding-top', 'padding-left', 'padding-right', 'padding-bottom',
@@ -227,19 +227,19 @@ Element.COMMON_COMPUTED_STYLE = [
   'border-top-left-radius', 'border-top-right-radius',
   'border-bottom-right-radius', 'border-bottom-left-radius',
 ];
-// 文字节点特殊属性名
+/** 文字节点特殊属性名 */
 Element.TEXT_PROPERTIES = [];
-// 文字节点特殊样式名
+/** 文字节点特殊样式名 */
 Element.TEXT_COMPUTED_STYLE = [
   'font-family', 'font-size', 'font-weight', 'text-align',
   'line-height', 'text-overflow', 'color',
   // 'letter-spacing', 'word-spacing',
 ];
-// 图片节点特殊属性名
+/** 图片节点特殊属性名 */
 Element.IMAGE_PROPERTIES = [
   'src', 'mode',
 ];
-// 图片节点特殊样式名
+/** 图片节点特殊样式名 */
 Element.IMAGE_COMPUTED_STYLE = [];
 
 /**

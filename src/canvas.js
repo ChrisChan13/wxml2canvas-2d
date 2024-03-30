@@ -1,17 +1,17 @@
 import { createGradient } from './gradient';
 
-// 默认行高
+/** 默认行高 */
 const DEFAULT_LINE_HEIGHT = 1.35;
-// 行高位置校准
+/** 行高位置校准 */
 const LINE_HEIGHT_OFFSET = 0.11;
-// 字体大小位置校准
+/** 字体大小位置校准 */
 const FONT_SIZE_OFFSET = 0.08;
 
 const {
   platform: SYS_PLATFORM,
   pixelRatio: SYS_DPR,
 } = wx.getSystemInfoSync();
-// 是否为 iOS 平台
+/** 是否为 iOS 平台 */
 const IS_IOS = SYS_PLATFORM === 'ios';
 
 /**
@@ -113,6 +113,7 @@ class Canvas {
     ctx.beginPath();
     if (element['border-radius'] !== '0px') {
       const radius = element.getBorderRadius();
+      /** 旋转角度的单位：iOS 角度、Android 弧度 */
       const unitRotateAngle = IS_IOS ? 1 : Math.PI / 180;
       ctx.ellipse(
         element.left + radius.leftTop,
@@ -259,6 +260,7 @@ class Canvas {
     ctx.fillStyle = element.color;
     const fontSize = parseFloat(element['font-size']);
 
+    // 小程序画布中无实际表现，暂不支持
     // ctx.letterSpacing = element['letter-spacing'];
     // ctx.wordSpacing = element['word-spacing'];
 
@@ -271,16 +273,18 @@ class Canvas {
       lineHeight = fontSize * DEFAULT_LINE_HEIGHT;
     }
 
+    /** 单行内容，逐行显示 */
     let lineText = '';
+    /** 内容总行数 */
     let lines = 0;
-    // 计算元素内实际显示最大行数
+    /** 计算元素内实际显示最大行数 */
     const maxLines = Math.round(content.height / lineHeight);
     // 消除行高计算偏差
     lineHeight = content.height / maxLines;
 
     // eslint-disable-next-line no-restricted-syntax
     for (const char of `${element.dataset.text}`) {
-      // 判断是否换行
+      // 判断是否需要换行
       if (ctx.measureText(lineText + char).width > Math.ceil(content.width)) {
         const isTextOverflow = (lines + 1) === maxLines;
         // 判断是否多余文字使用 ... 展示
