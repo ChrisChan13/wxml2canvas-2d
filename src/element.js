@@ -222,8 +222,9 @@ Element.COMMON_PROPERTIES = [];
 /** 节点通用样式名 */
 Element.COMMON_COMPUTED_STYLE = [
   'background-color', 'border-radius', 'background-image',
+  'background-position', 'background-size', 'background-repeat',
   'padding-top', 'padding-left', 'padding-right', 'padding-bottom',
-  'border', 'box-shadow', 'opacity',
+  'border', 'box-shadow', 'opacity', 'background-clip',
   'border-top-left-radius', 'border-top-right-radius',
   'border-bottom-right-radius', 'border-bottom-left-radius',
 ];

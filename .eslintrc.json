@@ -27,6 +27,7 @@
     "linebreak-style": "off",
     "no-multi-assign": "off",
     "no-underscore-dangle": "off",
-    "no-param-reassign": "off"
+    "no-param-reassign": "off",
+    "no-await-in-loop": "off"
   }
 }

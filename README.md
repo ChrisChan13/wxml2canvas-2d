@@ -98,6 +98,27 @@ Page({
       <td>背景颜色，支持</td>
     </tr>
     <tr>
+      <td colspan="2">background-image</td>
+      <td>背景图像，支持</td>
+    </tr>
+    <tr>
+      <td rowspan="2">background-position</td>
+      <td>background-position-x</td>
+      <td>背景图像水平方向的位置，支持</td>
+    </tr>
+    <tr>
+      <td>background-position-y</td>
+      <td>背景图像垂直方向的位置，支持</td>
+    </tr>
+    <tr>
+      <td colspan="2">background-size</td>
+      <td>背景图像的大小，支持</td>
+    </tr>
+    <tr>
+      <td colspan="2">background-repeat</td>
+      <td>背景图像的重复方式，暂不支持 space 和 round</td>
+    </tr>
+    <tr>
       <td rowspan="3">border</td>
       <td>border-width</td>
       <td>边框宽度，暂仅支持四边同宽</td>
@@ -157,9 +178,19 @@ Page({
   <br>
 
   - [ ] 支持 background-image 等背景图片样式
+    - [x] 支持 background-image 基础属性设置
+    - [ ] 支持 background-clip 延伸范围
   - [ ] 支持渐变类 background，Gradients
+    - [x] 支持 linear-gradient 线性渐变
+    - [ ] 支持 radial-gradient 径向渐变
+    - [ ] 支持 conic-gradient 锥形渐变
   - [ ] 支持多重 background，多重 box-shadow
+    - [x] 支持多重 background-image
+    - [ ] 支持复合多重 background，Gradients
+    - [ ] 支持多重 box-shadow
   - [ ] 支持渐变类 Gradients 插值提示
+  - [ ] 支持 CSS Transforms 相关属性
+  - [ ] 支持 CSS Writing Modes 相关属性
 </details>
 
 ## Demo

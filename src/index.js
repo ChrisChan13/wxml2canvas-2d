@@ -14,7 +14,8 @@ const drawElement = async (canvas, element) => {
     canvas.drawBoxShadow();
   }
   canvas.setElementBoundary();
-  canvas.drawBackground();
+  canvas.drawBackgroundColor();
+  await canvas.drawBackgroundImage();
   if (element.src) {
     await canvas.drawImage();
   } else if (element.dataset.text) {

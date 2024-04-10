@@ -33,6 +33,67 @@ const getCanvas = (component, selector) => new Promise(
 );
 
 /**
+ * 绘制重复背景图案
+ * @param {CanvasRenderingContext2D} ctx 画布上下文
+ * @param {Element} element wxml 元素
+ * @param {Image} image 图片元素对象
+ * @param {Number} x image 的左上角在目标画布上 X 轴坐标
+ * @param {Number} y image 的左上角在目标画布上 Y 轴坐标
+ * @param {Number} width image 在目标画布上绘制的宽度
+ * @param {Number} height image 在目标画布上绘制的高度
+ * @param {Boolean} repeatX X 轴是否重复绘制
+ * @param {Boolean} repeatY Y 轴是否重复绘制
+ * @param {Number} stepX X 轴坐标的步进数
+ * @param {Number} stepY Y 轴坐标的步进数
+ */
+const drawImageRepeated = (
+  ctx, element, image,
+  x, y, width, height,
+  repeatX = false, repeatY = false,
+  stepX = 0, stepY = 0,
+) => {
+  const content = element.getBoxSize();
+  ctx.drawImage(
+    image,
+    0, 0, image.width, image.height,
+    x + stepX * width, y + stepY * height, width, height,
+  );
+  if (repeatX) {
+    if (stepX > -1 && x + (stepX + 1) * width < content.right) {
+      drawImageRepeated(
+        ctx, element, image,
+        x, y, width, height,
+        true, false,
+        stepX + 1, stepY,
+      );
+    } if (stepX < 1 && x + stepX * width > content.left) {
+      drawImageRepeated(
+        ctx, element, image,
+        x, y, width, height,
+        true, false,
+        stepX - 1, stepY,
+      );
+    }
+  } if (repeatY) {
+    if (stepY > -1 && y + (stepY + 1) * height < content.bottom) {
+      drawImageRepeated(
+        ctx, element, image,
+        x, y, width, height,
+        repeatX && repeatY, true,
+        stepX, stepY + 1,
+      );
+    } if (stepY < 1 && y + stepY * height > content.top) {
+      drawImageRepeated(
+        ctx, element, image,
+        x, y, width, height,
+        repeatX && repeatY, true,
+        stepX, stepY - 1,
+      );
+    }
+  }
+};
+
+/**
  * 画布工具类
  *
  * 1.实例化：传入组件实例以及画布选择器
@@ -172,8 +233,8 @@ class Canvas {
     this.context.clip();
   }
 
-  /** 绘制 wxml 元素的背景 */
-  drawBackground() {
+  /** 绘制 wxml 元素的背景色 */
+  drawBackgroundColor() {
     const { context: ctx, element } = this;
     ctx.fillStyle = element['background-color'];
     ctx.fillRect(element.left, element.top, element.width, element.height);
@@ -186,6 +247,86 @@ class Canvas {
       element.width,
       element.height,
     );
+  }
+
+  /** 绘制 wxml 元素的背景图案 */
+  async drawBackgroundImage() {
+    const { context: ctx, element } = this;
+    const backgroundImage = element['background-image'];
+    if (!backgroundImage || backgroundImage === 'none') return;
+    const images = backgroundImage.split(', ').reverse();
+    const sizes = element['background-size'].split(', ').reverse();
+    const positions = element['background-position'].split(', ').reverse();
+    const repeats = element['background-repeat'].split(', ').reverse();
+    const content = element.getBoxSize();
+
+    for (let index = 0; index < images.length; index++) {
+      const src = images[index].slice(5, -2);
+      const image = await this.createImage(src);
+      let dx;
+      let dy;
+      let dWidth;
+      let dHeight;
+
+      const size = sizes[index];
+      if (size === 'auto') {
+        dWidth = image.width;
+        dHeight = image.height;
+      } else if (size === 'contain') {
+        // 对比宽高，根据长边计算缩放结果数值
+        if (image.width / image.height >= content.width / content.height) {
+          dWidth = content.width;
+          dx = content.left;
+          dHeight = image.height * (dWidth / image.width);
+        } else {
+          dHeight = content.height;
+          dy = content.top;
+          dWidth = image.width * (dHeight / image.height);
+        }
+      } else if (size === 'cover') {
+        // 对比宽高，根据短边计算缩放结果数值
+        if (image.width / image.height <= content.width / content.height) {
+          dWidth = content.width;
+          dx = content.left;
+          dHeight = image.height * (dWidth / image.width);
+        } else {
+          dHeight = content.height;
+          dy = content.top;
+          dWidth = image.width * (dHeight / image.height);
+        }
+      } else {
+        const [sizeWidth, sizeHeight] = size.split(' ');
+        dWidth = /%/.test(sizeWidth)
+          ? content.width * (parseFloat(sizeWidth) / 100)
+          : parseFloat(sizeWidth);
+        dHeight = /%/.test(sizeHeight)
+          ? content.height * (parseFloat(sizeHeight) / 100)
+          : parseFloat(sizeHeight);
+      }
+
+      // 关于背景图像位置的百分比偏移量计算方式，参考文档：
+      // https://developer.mozilla.org/zh-CN/docs/Web/CSS/background-position#%E5%85%B3%E4%BA%8E%E7%99%BE%E5%88%86%E6%AF%94%EF%BC%9A
+      const position = positions[index];
+      const [positionX, positionY] = position.split(' ');
+      dx = dx ?? (
+        content.left + (/%/.test(positionX)
+          ? (content.width - dWidth) * (parseFloat(positionX) / 100)
+          : parseFloat(positionX))
+      );
+      dy = dy ?? (
+        content.top + (/%/.test(positionY)
+          ? (content.height - dHeight) * (parseFloat(positionY) / 100)
+          : parseFloat(positionY))
+      );
+
+      const repeat = repeats[index];
+      drawImageRepeated(
+        ctx, element, image,
+        dx, dy, dWidth, dHeight,
+        repeat === 'repeat' || repeat === 'repeat-x',
+        repeat === 'repeat' || repeat === 'repeat-y',
+      );
+    }
   }
 
   /** 绘制 wxml 的 image 元素 */

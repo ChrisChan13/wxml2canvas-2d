@@ -4,11 +4,11 @@
  * @returns {String} 渐变类型
  */
 const getGradientType = (element) => {
-  const background = element['background-image'];
-  if (!background || background === 'none') return '';
-  if (background.startsWith('linear-gradient')) return 'linear';
-  if (background.startsWith('radial-gradient')) return 'radial';
-  if (background.startsWith('conic-gradient')) return 'conic';
+  const backgroundImage = element['background-image'];
+  if (!backgroundImage || backgroundImage === 'none') return '';
+  if (backgroundImage.startsWith('linear-gradient')) return 'linear';
+  if (backgroundImage.startsWith('radial-gradient')) return 'radial';
+  if (backgroundImage.startsWith('conic-gradient')) return 'conic';
   return '';
 };
 
