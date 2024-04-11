@@ -261,6 +261,7 @@ class Canvas {
     const content = element.getBoxSize();
 
     for (let index = 0; index < images.length; index++) {
+      if (!/url\(".*"\)/.test(images[index])) continue;
       const src = images[index].slice(5, -2);
       const image = await this.createImage(src);
       let dx;
