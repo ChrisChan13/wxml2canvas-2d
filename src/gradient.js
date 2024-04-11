@@ -46,11 +46,12 @@ const getGradientContent = (gradientType, backgroundImage) => {
 export const createLinearGradient = (ctx, element) => {
   const gradientContent = getGradientContent('linear', element['background-image']);
   if (!gradientContent) return undefined;
+  const content = element.getBoxSize('padding');
 
   /** 三角函数值 转换 弧度 换算比例 */
   const tri2radRatio = Math.PI / 180;
   /** 矩形斜边长度 */
-  const rectDiagonal = Math.sqrt(element.width ** 2 + element.height ** 2);
+  const rectDiagonal = Math.sqrt(content.width ** 2 + content.height ** 2);
 
   /** 渐变角度描述内容 */
   const [angleContent] = gradientContent.match(/(-?\d+(\.\d+)?(turn|deg|grad|rad))|(to( (left|top|bottom|right))+)/) ?? [];
@@ -85,7 +86,7 @@ export const createLinearGradient = (ctx, element) => {
       /left/.test(angleContent) ? -1 : 1 // 左方向，转换为 逆时针角度
     ) * (90 + (
       /top/.test(angleContent) ? -1 : 1 // 上方向，锐角角度
-    ) * (Math.atan(element.width / element.height) / tri2radRatio));
+    ) * (Math.atan(content.width / content.height) / tri2radRatio));
   }
 
   // 关于线性渐变各点位置以及各个角度的计算
@@ -105,8 +106,8 @@ export const createLinearGradient = (ctx, element) => {
   /** 渐变角度 与 矩形斜边 的夹角（锐角） */
   const gradientAngleDiffDiagonal = Math.abs(gradientAngle) - Math.abs(
     isObtuse
-      ? 90 + Math.atan(element.height / element.width) / tri2radRatio
-      : Math.atan(element.width / element.height) / tri2radRatio,
+      ? 90 + Math.atan(content.height / content.width) / tri2radRatio
+      : Math.atan(content.width / content.height) / tri2radRatio,
   );
   /** 渐变射线长度（标准） */
   const gradientDiagonal = Math.cos(gradientAngleDiffDiagonal * tri2radRatio) * rectDiagonal;
@@ -173,14 +174,14 @@ export const createLinearGradient = (ctx, element) => {
   });
 
   startingPoint.push(
-    (isClockwise ? element.left : element.right)
+    (isClockwise ? content.left : content.right)
       + (isObtuse ? 1 : -1) * (isClockwise ? 1 : -1) * startingPointX - startingPrefixX,
-    (isObtuse ? element.top : element.bottom) - startingPointY + startingPrefixY,
+    (isObtuse ? content.top : content.bottom) - startingPointY + startingPrefixY,
   );
   endingPoint.push(
-    (isClockwise ? element.right : element.left)
+    (isClockwise ? content.right : content.left)
       + (isObtuse ? -1 : 1) * (isClockwise ? 1 : -1) * startingPointX + endingAffixX,
-    (isObtuse ? element.bottom : element.top) + startingPointY - endingAffixY,
+    (isObtuse ? content.bottom : content.top) + startingPointY - endingAffixY,
   );
   /** 线性渐变对象 */
   const gradient = ctx.createLinearGradient(...startingPoint, ...endingPoint);
@@ -188,7 +189,7 @@ export const createLinearGradient = (ctx, element) => {
   for (let index = 0; index < colorStops.length; index++) {
     const item = colorStops[index];
     // 暂不支持控制渐变进程（插值提示）
-    if (!item.color) return item;
+    if (!item.color) continue;
     if (item.stops.length === 0) {
       if (index === 0) {
         item.stops.push(0); // 渐变起始点默认位置：0

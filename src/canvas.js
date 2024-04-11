@@ -35,7 +35,7 @@ const getCanvas = (component, selector) => new Promise(
 /**
  * 绘制重复背景图案
  * @param {CanvasRenderingContext2D} ctx 画布上下文
- * @param {Element} element wxml 元素
+ * @param {Object} content wxml 元素的盒子模型
  * @param {Image} image 图片元素对象
  * @param {Number} x image 的左上角在目标画布上 X 轴坐标
  * @param {Number} y image 的左上角在目标画布上 Y 轴坐标
@@ -47,12 +47,11 @@ const getCanvas = (component, selector) => new Promise(
  * @param {Number} stepY Y 轴坐标的步进数
  */
 const drawImageRepeated = (
-  ctx, element, image,
+  ctx, content, image,
   x, y, width, height,
   repeatX = false, repeatY = false,
   stepX = 0, stepY = 0,
 ) => {
-  const content = element.getBoxSize();
   ctx.drawImage(
     image,
     0, 0, image.width, image.height,
@@ -61,14 +60,14 @@ const drawImageRepeated = (
   if (repeatX) {
     if (stepX > -1 && x + (stepX + 1) * width < content.right) {
       drawImageRepeated(
-        ctx, element, image,
+        ctx, content, image,
         x, y, width, height,
         true, false,
         stepX + 1, stepY,
       );
     } if (stepX < 1 && x + stepX * width > content.left) {
       drawImageRepeated(
-        ctx, element, image,
+        ctx, content, image,
         x, y, width, height,
         true, false,
         stepX - 1, stepY,
@@ -77,14 +76,14 @@ const drawImageRepeated = (
   } if (repeatY) {
     if (stepY > -1 && y + (stepY + 1) * height < content.bottom) {
       drawImageRepeated(
-        ctx, element, image,
+        ctx, content, image,
         x, y, width, height,
         repeatX && repeatY, true,
         stepX, stepY + 1,
       );
     } if (stepY < 1 && y + stepY * height > content.top) {
       drawImageRepeated(
-        ctx, element, image,
+        ctx, content, image,
         x, y, width, height,
         repeatX && repeatY, true,
         stepX, stepY - 1,
@@ -254,11 +253,11 @@ class Canvas {
     const { context: ctx, element } = this;
     const backgroundImage = element['background-image'];
     if (!backgroundImage || backgroundImage === 'none') return;
+    const content = element.getBoxSize('padding');
     const images = backgroundImage.split(', ').reverse();
     const sizes = element['background-size'].split(', ').reverse();
     const positions = element['background-position'].split(', ').reverse();
     const repeats = element['background-repeat'].split(', ').reverse();
-    const content = element.getBoxSize();
 
     for (let index = 0; index < images.length; index++) {
       if (!/url\(".*"\)/.test(images[index])) continue;
@@ -322,7 +321,7 @@ class Canvas {
 
       const repeat = repeats[index];
       drawImageRepeated(
-        ctx, element, image,
+        ctx, content, image,
         dx, dy, dWidth, dHeight,
         repeat === 'repeat' || repeat === 'repeat-x',
         repeat === 'repeat' || repeat === 'repeat-y',
@@ -342,7 +341,7 @@ class Canvas {
     let sy;
     let sWidth;
     let sHeight;
-    const content = element.getBoxSize();
+    const content = element.getBoxSize('content');
     if (element.mode === 'aspectFit') {
       sx = 0;
       sy = 0;
@@ -393,7 +392,7 @@ class Canvas {
   /** 绘制 wxml 的 text 元素 */
   drawText() {
     const { context: ctx, element } = this;
-    const content = element.getBoxSize();
+    const content = element.getBoxSize('content');
 
     // 固定格式：font-weight font-size font-family
     ctx.font = `${element['font-weight']} ${element['font-size']} ${element['font-family']}`;

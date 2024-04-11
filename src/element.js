@@ -12,19 +12,31 @@ class Element {
   }
 
   /** 获取 wxml 元素的内容盒子大小数据 */
-  getBoxSize() {
-    if (this.__content) return this.__content;
+  getBoxSize(sizing = 'border') {
+    if (this[`__${sizing}Box`]) return this[`__${sizing}Box`];
+
+    let offsetLeft = this.left;
+    let offsetTop = this.top;
+    let offsetRight = this.right;
+    let offsetBottom = this.bottom;
+    let offsetWidth = this.width;
+    let offsetHeight = this.height;
+
     const padLeft = parseFloat(this['padding-left']);
     const padTop = parseFloat(this['padding-top']);
     const padRight = parseFloat(this['padding-right']);
     const padBottom = parseFloat(this['padding-bottom']);
-    let offsetLeft = this.left + padLeft;
-    let offsetTop = this.top + padTop;
-    let offsetRight = this.right - padRight;
-    let offsetBottom = this.bottom - padBottom;
-    let offsetWidth = this.width - padLeft - padRight;
-    let offsetHeight = this.height - padTop - padBottom;
     const { width: borderWidth } = this.getBorder();
+
+    switch (sizing) {
+      case 'content':
+        offsetLeft += padLeft;
+        offsetTop += padTop;
+        offsetRight -= padRight;
+        offsetBottom -= padBottom;
+        offsetWidth -= (padLeft + padRight);
+        offsetHeight -= (padTop + padBottom);
+      case 'padding':
     if (borderWidth > 0) {
       offsetLeft += borderWidth;
       offsetTop += borderWidth;
@@ -33,8 +45,11 @@ class Element {
       offsetWidth -= 2 * borderWidth;
       offsetHeight -= 2 * borderWidth;
     }
+        break;
+      default:
+    }
     Object.assign(this, {
-      __content: {
+      [`__${sizing}Box`]: {
         left: offsetLeft,
         top: offsetTop,
         right: offsetRight,
@@ -43,7 +58,7 @@ class Element {
         height: offsetHeight,
       },
     });
-    return this.__content;
+    return this[`__${sizing}Box`];
   }
 
   /** 获取 wxml 元素的边框数据 */
