@@ -1,10 +1,12 @@
-import { createGradient } from './gradient';
+import { drawGradient } from './gradient';
 
-/** 默认行高 */
+/** CSS 默认行高 */
 const DEFAULT_LINE_HEIGHT = 1.35;
 /** 行高位置校准 */
+// CSS 与 画布 的 line-height 存在数值偏差，暂时以常数换算实现近似结果
 const LINE_HEIGHT_OFFSET = 0.11;
 /** 字体大小位置校准 */
+// CSS 与 画布 的 font-size 存在数值偏差，暂时以常数换算实现近似结果
 const FONT_SIZE_OFFSET = 0.08;
 
 const {
@@ -237,15 +239,6 @@ class Canvas {
     const { context: ctx, element } = this;
     ctx.fillStyle = element['background-color'];
     ctx.fillRect(element.left, element.top, element.width, element.height);
-    const gradient = createGradient(ctx, element);
-    if (!gradient) return;
-    ctx.fillStyle = gradient;
-    ctx.fillRect(
-      element.left,
-      element.top,
-      element.width,
-      element.height,
-    );
   }
 
   /** 绘制 wxml 元素的背景图案 */
@@ -253,8 +246,12 @@ class Canvas {
     const { context: ctx, element } = this;
     const backgroundImage = element['background-image'];
     if (!backgroundImage || backgroundImage === 'none') return;
+    drawGradient(ctx, element);
+
     const content = element.getBoxSize('padding');
     const images = backgroundImage.split(', ').reverse();
+    if (images.length === 0) return;
+
     const sizes = element['background-size'].split(', ').reverse();
     const positions = element['background-position'].split(', ').reverse();
     const repeats = element['background-repeat'].split(', ').reverse();
