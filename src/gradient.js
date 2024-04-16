@@ -4,6 +4,12 @@ const TRI2RAD_RATIO = Math.PI / 180;
 // 暂未找到 CSS 中椭圆形径向渐变的长短轴生成规律，以常数代替实现近似结果
 const SIDE2CORNER_RATIO = 1.4141;
 
+const {
+  platform: SYS_PLATFORM,
+} = wx.getSystemInfoSync();
+/** 是否为 Windows 平台 */
+const IS_WINDOWS = SYS_PLATFORM === 'windows';
+
 /**
  * 获取 wxml 元素背景渐变类型
  * @param {Element} element wxml 元素
@@ -442,7 +448,154 @@ export const createRadialGradient = (ctx, element) => {
  * @param {Element} element wxml 元素
  * @returns {CanvasGradient} 渐变对象
  */
-export const createConicGradient = (ctx, element) => undefined;
+export const createConicGradient = (ctx, element) => {
+  const gradientContent = getGradientContent('conic', element['background-image']);
+  if (!gradientContent) return undefined;
+  const content = element.getBoxSize('padding');
+
+  /** 渐变的角度 */
+  const [angle] = gradientContent.match(/from -?\d+(\.\d+)?(turn|deg|grad|rad)/) ?? [];
+  /** 渐变的位置 */
+  const [position] = gradientContent.match(/at( (left|top|bottom|right|center|(-?\d+(\.\d+)?(px|%))))+/) ?? [];
+
+  /** 渐变的起始角度 */
+  let startAngle = 0;
+  if (angle) {
+    [, startAngle] = angle.split(' ');
+    if (/deg/.test(startAngle)) {
+      startAngle = parseFloat(startAngle) * TRI2RAD_RATIO;
+    } else if (/turn/.test(startAngle)) {
+      startAngle = parseFloat(startAngle) * 360 * TRI2RAD_RATIO;
+    } else if (/grad/.test(startAngle)) {
+      startAngle = parseFloat(startAngle) * 0.9 * TRI2RAD_RATIO;
+    } else {
+      startAngle = parseFloat(startAngle);
+    }
+  }
+
+  // Windows 渐变起始角度校准
+  if (IS_WINDOWS) {
+    startAngle -= 0.5 * Math.PI;
+  }
+
+  /** 渐变起始位置的 x 坐标 */
+  let positionX;
+  /** 渐变起始位置的 y 坐标 */
+  let positionY;
+  if (position) {
+    [, positionX, positionY] = position.split(' ');
+    if (positionX === 'left') {
+      positionX = 0;
+    } else if (positionX === 'right') {
+      positionX = content.width;
+    } else if (positionX === 'center') {
+      positionX = content.width / 2;
+    } else if (/%/.test(positionX)) {
+      positionX = content.width * (parseFloat(positionX) / 100);
+    } else {
+      positionX = parseFloat(positionX);
+    }
+    if (positionY === 'top') {
+      positionY = 0;
+    } else if (positionY === 'bottom') {
+      positionY = content.height;
+    } else if (positionY === 'center') {
+      positionY = content.height / 2;
+    } else if (/%/.test(positionY)) {
+      positionY = content.height * (parseFloat(positionY) / 100);
+    } else {
+      positionY = parseFloat(positionY);
+    }
+  } else {
+    positionX = content.width / 2;
+    positionY = content.height / 2;
+  }
+
+  /** 渐变颜色描述内容 */
+  // 正则还存在问题，会把前面位置描述匹配到，但暂不影响结果
+  const colorsContent = gradientContent.match(/((rgba?\(((, )?\d+(\.\d+)?)+\)|red)( -?\d+(\.\d+)?(turn|deg|grad|rad|%))*)|(-?\d+(\.\d+)?(turn|deg|grad|rad|%))/g) ?? [];
+  /** 渐变起始角度校准 */
+  let angleOffset = 0;
+  /** 渐变色标位置集合 */
+  const colorStops = colorsContent.map((item) => {
+    /** 渐变色标颜色 */
+    const [color] = item.match(/rgba?\(((, )?\d+(\.\d+)?)+\)|red/) ?? [];
+    /** 渐变色标位置 */
+    const stops = (
+      item.match(/-?\d+(\.\d+)?(turn|deg|grad|rad|%)/g) ?? []
+    ).map((stopItem) => {
+      let stopAngle;
+      if (/deg/.test(stopItem)) {
+        stopAngle = parseFloat(stopItem) * TRI2RAD_RATIO;
+      } else if (/turn/.test(stopItem)) {
+        stopAngle = parseFloat(stopItem) * 360 * TRI2RAD_RATIO;
+      } else if (/grad/.test(stopItem)) {
+        stopAngle = parseFloat(stopItem) * 0.9 * TRI2RAD_RATIO;
+      } else if (/%/.test(stopItem)) {
+        stopAngle = (parseFloat(stopItem) / 100) * 2 * Math.PI;
+      } else {
+        stopAngle = parseFloat(stopItem);
+      }
+      if (angleOffset === 0 && color && stopAngle < 0) {
+        angleOffset = -stopAngle;
+      }
+      return stopAngle + angleOffset;
+    });
+    /** 渐变色标信息 */
+    const colorStop = { stops };
+    if (color) { Object.assign(colorStop, { color }); }
+    return colorStop;
+  });
+
+  /** 锥形渐变对象 */
+  // 起始角度的单位：Windows 角度、开发工具 弧度
+  const gradient = ctx.createConicGradient(
+    IS_WINDOWS ? startAngle : startAngle / TRI2RAD_RATIO,
+    content.left + positionX, content.top + positionY,
+  );
+
+  for (let index = 0; index < colorStops.length; index++) {
+    const item = colorStops[index];
+    // 暂不支持控制渐变进程（插值提示）
+    if (!item.color) continue;
+    if (item.stops.length === 0) {
+      if (index === 0) {
+        item.stops.push(0); // 渐变起始点默认位置：0
+      } else if (index === colorStops.length - 1) {
+        item.stops.push(2 * Math.PI); // 渐变终止点默认位置：100%
+      } else {
+        /** 两个已声明位置信息的色标间，未声明位置信息的色标数量 */
+        let stopInter = 1;
+        let stopIndex = index;
+        /** 上一个渐变色标位置 */
+        const prevStop = colorStops[stopIndex - 1].stops.slice(-1)[0];
+        /** 下一个渐变色标位置 */
+        let nextStop;
+        while (++stopIndex < colorStops.length) {
+          stopInter += 1;
+          if (colorStops[stopIndex].stops.length > 0) {
+            [nextStop] = colorStops[stopIndex].stops;
+            break;
+          }
+        }
+        /** 当前渐变色标位置 */
+        const currentStop = prevStop + ((nextStop ?? 1) - prevStop) / stopInter;
+        item.stops.push(currentStop);
+      }
+    }
+    let stopIndex = 0;
+    for (; stopIndex < item.stops.length; stopIndex++) {
+      const stopItem = item.stops[stopIndex];
+      /** 色标位置偏移值 */
+      const stopOffset = +Number(
+        stopItem / (2 * Math.PI),
+      ).toFixed(4);
+      if (stopOffset > 1 || stopOffset < 0) break;
+      gradient.addColorStop(stopOffset, item.color);
+    }
+  }
+  return gradient;
+};
 
 /**
  * 生成并绘制渐变对象
