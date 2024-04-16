@@ -182,8 +182,8 @@ Page({
     - [ ] 支持 background-clip 延伸范围
   - [ ] 支持渐变类 Gradients
     - [x] 支持 linear-gradient 线性渐变
-    - [ ] 支持 radial-gradient 径向渐变
-    - [ ] 支持 conic-gradient 锥形渐变
+    - [x] 支持 radial-gradient 径向渐变
+    - [x] 支持 conic-gradient 锥形渐变
     - [ ] 支持多重 Gradients 渐变
     - [ ] 支持渐变类 Gradients 插值提示（hard）
   - [ ] 支持多重 background，多重 box-shadow
@@ -191,6 +191,23 @@ Page({
     - [ ] 支持多重 box-shadow
   - [ ] 支持 CSS Transforms 相关属性（hard）
   - [ ] 支持 CSS Writing Modes 相关属性（hard）
+</details>
+<details>
+  <summary><b>注意</b></summary>
+  <br>
+
+  - 微信新版 Canvas 2D 接口基本与 Web Canvas API 对齐，但仍有部分 API 存在差异，随着微信版本或基础库更新，或许会提高相应 API 的支持度
+  - 微信新版 Canvas 2D 的画布有宽高分别最大不能超过 4096px 的限制，此 repo 绘制画布时会将画布大小根据设备像素比（dpr）进行放大，使用时请注意避免容器的宽高大于 4096px / dpr
+  - 尽管微信新版 Canvas 2D 接口采用同步的方式绘制 Canvas 元素，但在部分机型或平台上调用 wx.canvasToTempFilePath 时，也可能绘制过程尚未完成，所以使用过程中尽可能延迟或分步骤调用 wx.canvasToTempFilePath 进行导出图片的操作
+  - iOS 平台对于 Path2D 的支持度不足，此 repo 已去除 Path2D 的相关应用，转而使用普通路径，相对应的路径生成次数会增多，绘制时长有所增加，但不多
+  - iOS 平台使用 CanvasContext.ellipse 以及 Path2D.ellipse 时，其中的参数 rotation 旋转角度所使用的角度单位不同：iOS 使用角度值，macOS 平台未知，其余使用弧度值
+  - 绘制文字元素时，各机型和各平台对于 font-size、font-weight、line-height 的实际表现与 CSS 中的表现有细微不同，此 repo 暂时使用常量比例进行换算对齐，未彻底解决
+  - 绘制元素的边框暂时只支持 solid 和 dashed 两种样式，其中 dashed 样式的边框使用 CanvasContext.setLineDash 实现，各机型和各平台的边框虚线间距表现均有差异，此 repo 暂时使用与边框宽度等比的间距表现虚线边框
+  - 绘制元素的阴影时，阴影的透明度将随着背景色的透明度等比改变，未设置背景色时，元素的阴影将会不可见，所以绘制元素的阴影时，请尽量设置该元素的背景色为不透明的实色，若无设置，此 repo 在绘制该元素的阴影前会自动设置为纯黑色背景
+  - 绘制渐变图案时，请尽量在 CSS 中将渐变的色标按位置正序顺序依次书写，支持使用负值（径向渐变除外），暂未处理色标位置错乱情况下的表现形式，暂不支持控制渐变进程的插值提示
+  - 微信新版 Canvas API 目前不支持绘制椭圆形径向渐变图案，此 repo 使用 CanvasContext.scale 对圆形径向渐变图案进行放大或缩小，以实现椭圆形径向渐变图案，而在 closest-corner 与 farthest-corner 模式下的椭圆形径向渐变中，目前还未找出 CSS 在绘制椭圆形径向渐变图案时的长轴与短轴的大小的计算规则，暂时使用常量比例进行换算对齐，未彻底解决
+  - 锥形渐变图案目前仅微信开发者工具以及 Windows 平台支持，开发工具上锥形渐变角度的 0° 基准与 CSS 表现一致（即 12 点钟方向），起始角度参数的角度单位为弧度，Windows 平台上的 0° 基准为 3 点钟方向，起始角度参数的角度单位为角度，iOS 和 Android 均不支持 CanvasContext.createConicGradient API，macOS 平台未知
+  - 设置渐变背景图案时，请尽量避免使用 black、white 等名词形式描述颜色，部分 iOS 设备不会自动转换颜色内容，难以匹配并识别颜色（目前发现部分 iOS 设备中，红色不管以任何形式描述，结果均显示为 red，暂时已处理，且仅处理颜色为 red 的情况）
 </details>
 
 ## Demo

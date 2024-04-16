@@ -8,8 +8,10 @@ Page({
     console.time('生成耗时');
     await canvas.draw();
     console.timeEnd('生成耗时');
-    const url = await canvas.toTempFilePath();
-    this.setData({ tempImage: url });
+    setTimeout(async () => {
+      const url = await canvas.toTempFilePath();
+      this.setData({ tempImage: url });
+    }, 300);
   },
   onPreviewCanvas() {
     const { tempImage } = this.data;
