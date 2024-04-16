@@ -29,15 +29,18 @@ const getGradientContent = (gradientType, backgroundImage) => {
   if (gradientType === 'linear') {
     [gradientContent] = backgroundImage.match(
       // 线性渐变语法参考：https://developer.mozilla.org/zh-CN/docs/Web/CSS/gradient/linear-gradient#%E5%BD%A2%E5%BC%8F%E8%AF%AD%E6%B3%95
-      /linear-gradient\(((-?\d+(\.\d+)?(turn|deg|grad|rad))|(to( (left|top|bottom|right))+))?((, )?((rgba?\(((, )?\d+(\.\d+)?)+\)( -?\d+(\.\d+)?(px|%))*)|(-?\d+(\.\d+)?(px|%))))+\)/,
+      /linear-gradient\(((-?\d+(\.\d+)?(turn|deg|grad|rad))|(to( (left|top|bottom|right))+))?((, )?(((rgba?\(((, )?\d+(\.\d+)?)+\)|red)( -?\d+(\.\d+)?(px|%))*)|(-?\d+(\.\d+)?(px|%))))+\)/,
     ) ?? [];
   } else if (gradientType === 'radial') {
     [gradientContent] = backgroundImage.match(
       // 径向渐变语法参考：https://developer.mozilla.org/zh-CN/docs/Web/CSS/gradient/radial-gradient#%E5%BD%A2%E5%BC%8F%E8%AF%AD%E6%B3%95
-      /radial-gradient\((circle|ellipse)?(( ?(closest-corner|closest-side|farthest-corner|farthest-side))|( ?\d+(\.\d+)?(px|%))+)?( ?at( (left|top|bottom|right|center|(-?\d+(\.\d+)?(px|%))))+)?((, )?((rgba?\(((, )?\d+(\.\d+)?)+\)( \d+(\.\d+)?(px|%))*)|(-?\d+(\.\d+)?(px|%))))+\)/,
+      /radial-gradient\((circle|ellipse)?(( ?(closest-corner|closest-side|farthest-corner|farthest-side))|( ?\d+(\.\d+)?(px|%))+)?( ?at( (left|top|bottom|right|center|(-?\d+(\.\d+)?(px|%))))+)?((, )?(((rgba?\(((, )?\d+(\.\d+)?)+\)|red)( -?\d+(\.\d+)?(px|%))*)|(-?\d+(\.\d+)?(px|%))))+\)/,
     ) ?? [];
   } else if (gradientType === 'conic') {
-    // todo
+    [gradientContent] = backgroundImage.match(
+      // 锥形渐变语法参考：https://developer.mozilla.org/zh-CN/docs/Web/CSS/gradient/conic-gradient#%E5%BD%A2%E5%BC%8F%E8%AF%AD%E6%B3%95
+      /conic-gradient\((from -?\d+(\.\d+)?(turn|deg|grad|rad))?( ?at( (left|top|bottom|right|center|(-?\d+(\.\d+)?(px|%))))+)?((, )?(((rgba?\(((, )?\d+(\.\d+)?)+\)|red)( -?\d+(\.\d+)?(turn|deg|grad|rad|%))*)|(-?\d+(\.\d+)?(turn|deg|grad|rad|%))))+\)/,
+    );
   }
   return gradientContent;
 };
@@ -142,11 +145,11 @@ export const createLinearGradient = (ctx, element) => {
   let endingAffixY = 0;
 
   /** 渐变颜色描述内容 */
-  const colorsContent = gradientContent.match(/(rgba?\(((, )?\d+(\.\d+)?)+\)( -?\d+(\.\d+)?(px|%))*)|(-?\d+(\.\d+)?(px|%))/g) ?? [];
+  const colorsContent = gradientContent.match(/((rgba?\(((, )?\d+(\.\d+)?)+\)|red)( -?\d+(\.\d+)?(px|%))*)|(-?\d+(\.\d+)?(px|%))/g) ?? [];
   /** 渐变色标位置集合 */
   const colorStops = colorsContent.map((item, index) => {
     /** 渐变色标颜色 */
-    const [color] = item.match(/rgba?\(((, )?\d+(\.\d+)?)+\)/) ?? [];
+    const [color] = item.match(/rgba?\(((, )?\d+(\.\d+)?)+\)|red/) ?? [];
     /** 渐变色标位置 */
     const stops = (
       item.match(/-?\d+(\.\d+)?(px|%)/g) ?? []
@@ -348,11 +351,11 @@ export const createRadialGradient = (ctx, element) => {
 
   /** 渐变颜色描述内容 */
   // 正则还存在问题，会把前面位置描述匹配到，但暂不影响结果
-  const colorsContent = gradientContent.match(/(rgba?\(((, )?\d+(\.\d+)?)+\)( -?\d+(\.\d+)?(px|%))*)|(-?\d+(\.\d+)?(px|%))/g) ?? [];
+  const colorsContent = gradientContent.match(/((rgba?\(((, )?\d+(\.\d+)?)+\)|red)( -?\d+(\.\d+)?(px|%))*)|(-?\d+(\.\d+)?(px|%))/g) ?? [];
   /** 渐变色标位置集合 */
   const colorStops = colorsContent.map((item) => {
     /** 渐变色标颜色 */
-    const [color] = item.match(/rgba?\(((, )?\d+(\.\d+)?)+\)/) ?? [];
+    const [color] = item.match(/rgba?\(((, )?\d+(\.\d+)?)+\)|red/) ?? [];
     /** 渐变色标位置 */
     const stops = (
       item.match(/-?\d+(\.\d+)?(px|%)/g) ?? []
