@@ -454,13 +454,17 @@ export const drawGradient = (ctx, element) => {
   let scaleY = 1;
 
   if (gradientType === 'linear') {
+    if (!ctx.createLinearGradient) return;
     gradient = createLinearGradient(ctx, element);
   } else if (gradientType === 'radial') {
+    if (!ctx.createRadialGradient) return;
     const radial = createRadialGradient(ctx, element);
+    if (!radial) return;
     gradient = radial.gradient;
     scaleX = radial.scale.x;
     scaleY = radial.scale.y;
   } else if (gradientType === 'conic') {
+    if (!ctx.createConicGradient) return;
     gradient = createConicGradient(ctx, element);
   }
 
