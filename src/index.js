@@ -91,8 +91,8 @@ Component({
       };
       const [[container]] = await Element.getNodesRef(`.${containerClass}`, fields, page);
       await this.setDataSync({
-        canvasWidth: container.width,
-        canvasHeight: container.height,
+        canvasWidth: container.width * scale,
+        canvasHeight: container.height * scale,
       });
       const [items] = await Element.getNodesRef(`.${containerClass} .${itemClass}`, fields, page);
 
