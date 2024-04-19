@@ -12,9 +12,12 @@ const FONT_SIZE_OFFSET = 0.08;
 const {
   platform: SYS_PLATFORM,
   pixelRatio: SYS_DPR,
+  windowWidth: SYS_WIDTH,
 } = wx.getSystemInfoSync();
 /** 是否为 iOS 平台 */
 const IS_IOS = SYS_PLATFORM === 'ios';
+/** 设备像素与 750px 设计图比例 */
+const RPX_RATIO = 750 / SYS_WIDTH;
 
 /**
  * 获取画布对象
@@ -131,6 +134,8 @@ class Canvas {
    */
   async init(container, scale = 1) {
     const canvas = this.canvas = await getCanvas(this.component, this.selector);
+    this.scale = scale;
+    this.container = container;
     scale *= SYS_DPR;
     canvas.width = container.width * scale;
     canvas.height = container.height * scale;
@@ -495,12 +500,25 @@ class Canvas {
     ctx.shadowOffsetY = 0;
   }
 
-  /** 导出画布至临时图片 */
-  async toTempFilePath() {
-    const { tempFilePath } = await wx.canvasToTempFilePath({
+  /**
+   * 导出画布至临时图片
+   * @param {Boolean} original 是否使用实机表现作为导出图片的尺寸；
+   * true 则导出当前实机设备渲染的尺寸，各设备的设备像素比不同，导出图片尺寸将有所不同；
+   * false 则导出以 750px 设计图为基准的尺寸，即与 CSS 中设置的 rpx 大小一致，全设备导出图片尺寸一致；
+   * @returns {Promise<String>} 图片临时路径
+   */
+  async toTempFilePath(original = true) {
+    const payload = {
       canvas: this.canvas,
       fileType: 'png',
-    }, this.component);
+    };
+    if (!original) {
+      Object.assign(payload, {
+        destWidth: this.container.width * RPX_RATIO * this.scale,
+        destHeight: this.container.height * RPX_RATIO * this.scale,
+      });
+    }
+    const { tempFilePath } = await wx.canvasToTempFilePath(payload, this.component);
     return tempFilePath;
   }
 }

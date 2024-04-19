@@ -113,10 +113,13 @@ Component({
     },
     /**
      * 把画布内容导出生成图片
+     * @param {Boolean} original 是否使用实机表现作为导出图片的尺寸；
+     * true 则导出当前实机设备渲染的尺寸，各设备的设备像素比不同，导出图片尺寸将有所不同；
+     * false 则导出以 750px 设计图为基准的尺寸，即与 CSS 中设置的 rpx 大小一致，全设备导出图片尺寸一致；
      * @returns {Promise<String>} 图片临时路径
      */
-    async toTempFilePath() {
-      const tempFilePath = await this.canvas.toTempFilePath();
+    async toTempFilePath(original = true) {
+      const tempFilePath = await this.canvas.toTempFilePath(original);
       return tempFilePath;
     },
   },
