@@ -62,19 +62,54 @@ Page({
 
 ## API
 
-### 参数
+### 组件参数
 
-||类型|说明|默认值|
-|:-|:-|:-|:-|
-|`containerClass`|`string`|根节点（容器）样式类名称|wxml2canvas-container|
-|`itemClass`|`string`|内部节点样式类名称|wxml2canvas-item|
-|`scale`|`number`|画布缩放比例|1|
+||类型|必填|说明|默认值|
+|:-|:-|:-|:-|:-|
+|`containerClass`|`String`|否|根节点（容器）样式类名称|`'wxml2canvas-container'`|
+|`itemClass`|`String`|否|内部节点样式类名称|`'wxml2canvas-item'`|
+|`scale`|`Number`|否|画布缩放比例|`1`|
 
 ### 外部样式类
 
 ||说明|
 |:-|:-|
 |`box-class`|`canvas` 节点样式类|
+
+### 组件方法
+
+<table>
+  <tr>
+    <th rowspan=2></th>
+    <th rowspan=2>说明</th>
+    <th colspan=5>参数</th>
+  </tr>
+  <tr>
+    <th>属性</th>
+    <th>类型</th>
+    <th>默认值</th>
+    <th width=62>必填</th>
+    <th>说明</th>
+  </tr>
+  <tr>
+    <td><code>draw</code></td>
+    <td>绘制画布内容</td>
+    <td><code>page</code></td>
+    <td><code>PageObject</code></td>
+    <td>当前页面实例</td>
+    <td>否</td>
+    <td>组件所在页面实例</td>
+  </tr>
+  <tr>
+    <td><code>toTempFilePath</code></td>
+    <td>导出画布内容</td>
+    <td><code>original</code></td>
+    <td><code>Boolean</code></td>
+    <td><code>true</code></td>
+    <td>否</td>
+    <td>是否使用实机渲染尺寸<br><code>true</code>：各设备像素比不同，导出结果尺寸不同<br><code>false</code>：采用 750px 为标准，与 CSS 中样式一致</td>
+  </tr>
+</table>
 
 ### 其他
 
@@ -86,89 +121,89 @@ Page({
 
   <table>
     <tr>
-      <th colspan="2">属性</th>
+      <th colspan=2>属性</th>
       <th>说明</th>
     </tr>
     <tr>
-      <td colspan="2">background</td>
-      <td>背景，暂仅支持单一颜色</td>
+      <td colspan=2><code>background</code></td>
+      <td>背景，支持渐变图案</td>
     </tr>
     <tr>
-      <td colspan="2">background-color</td>
+      <td colspan=2><code>background-color</code></td>
       <td>背景颜色，支持</td>
     </tr>
     <tr>
-      <td colspan="2">background-image</td>
+      <td colspan=2><code>background-image</code></td>
       <td>背景图像，支持</td>
     </tr>
     <tr>
-      <td rowspan="2">background-position</td>
-      <td>background-position-x</td>
+      <td rowspan=2><code>background-position</code></td>
+      <td><code>background-position-x</code></td>
       <td>背景图像水平方向的位置，支持</td>
     </tr>
     <tr>
-      <td>background-position-y</td>
+      <td><code>background-position-y</code></td>
       <td>背景图像垂直方向的位置，支持</td>
     </tr>
     <tr>
-      <td colspan="2">background-size</td>
+      <td colspan=2><code>background-size</code></td>
       <td>背景图像的大小，支持</td>
     </tr>
     <tr>
-      <td colspan="2">background-repeat</td>
-      <td>背景图像的重复方式，暂不支持 space 和 round</td>
+      <td colspan=2><code>background-repeat</code></td>
+      <td>背景图像的重复方式，暂不支持 <code>space</code> 和 <code>round</code></td>
     </tr>
     <tr>
-      <td rowspan="3">border</td>
-      <td>border-width</td>
+      <td rowspan="3"><code>border</code></td>
+      <td><code>border-width</code></td>
       <td>边框宽度，暂仅支持四边同宽</td>
     </tr>
     <tr>
-      <td>border-style</td>
-      <td>边框样式，暂仅支持 solid 和 dashed</td>
+      <td><code>border-style</code></td>
+      <td>边框样式，暂仅支持 <code>solid</code> 和 <code>dashed</code></td>
     </tr>
     <tr>
-      <td>border-color</td>
+      <td><code>border-color</code></td>
       <td>边框颜色，支持</td>
     </tr>
     <tr>
-      <td colspan="2">opacity</td>
+      <td colspan=2><code>opacity</code></td>
       <td>透明度，支持</td>
     </tr>
     <tr>
-      <td colspan="2">box-shadow</td>
+      <td colspan=2><code>box-shadow</code></td>
       <td>阴影，暂仅支持单一阴影</td>
     </tr>
     <tr>
-      <td colspan="2">border-radius</td>
+      <td colspan=2><code>border-radius</code></td>
       <td>圆角，支持</td>
     </tr>
     <tr>
-      <td colspan="2">font-family</td>
+      <td colspan=2><code>font-family</code></td>
       <td>字体，支持</td>
     </tr>
     <tr>
-      <td colspan="2">font-size</td>
+      <td colspan=2><code>font-size</code></td>
       <td>字体大小，支持</td>
     </tr>
     <tr>
-      <td colspan="2">font-weight</td>
+      <td colspan=2><code>font-weight</code></td>
       <td>字重，支持</td>
     </tr>
     <tr>
-      <td colspan="2">text-align</td>
+      <td colspan=2><code>text-align</code></td>
       <td>文本对齐，支持</td>
     </tr>
     <tr>
-      <td colspan="2">line-height</td>
+      <td colspan=2><code>line-height</code></td>
       <td>行高，支持</td>
     </tr>
     <tr>
-      <td colspan="2">text-overflow</td>
+      <td colspan=2><code>text-overflow</code></td>
       <td>文字溢出处理，支持</td>
     </tr>
     <tr>
-      <td colspan="2">color</td>
+      <td colspan=2><code>color</code></td>
       <td>文字颜色，支持</td>
     </tr>
   </table>
@@ -177,20 +212,20 @@ Page({
   <summary><b>TODOs</b></summary>
   <br>
 
-  - [ ] 支持 background-image 等背景图片样式
-    - [x] 支持 background-image 基础属性设置
-    - [ ] 支持 background-clip 延伸范围
-  - [ ] 支持渐变类 Gradients
-    - [x] 支持 linear-gradient 线性渐变
-    - [x] 支持 radial-gradient 径向渐变
-    - [x] 支持 conic-gradient 锥形渐变
-    - [ ] 支持多重 Gradients 渐变
-    - [ ] 支持渐变类 Gradients 插值提示（hard）
-  - [ ] 支持多重 background，多重 box-shadow
-    - [x] 支持多重 background-image
-    - [ ] 支持多重 box-shadow
-  - [ ] 支持 CSS Transforms 相关属性（hard）
-  - [ ] 支持 CSS Writing Modes 相关属性（hard）
+  - [ ] 支持 `background-image` 等背景图片样式
+    - [x] 支持 `background-image` 基础属性设置
+    - [ ] 支持 `background-clip` 延伸范围
+  - [ ] 支持渐变类 `Gradients`
+    - [x] 支持 `linear-gradient` 线性渐变
+    - [x] 支持 `radial-gradient` 径向渐变
+    - [x] 支持 `conic-gradient` 锥形渐变
+    - [ ] 支持多重 `Gradients` 渐变
+    - [ ] 支持渐变类 `Gradients` 插值提示（难）
+  - [ ] 支持多重 `background`，多重 `box-shadow`
+    - [x] 支持多重 `background-image`
+    - [ ] 支持多重 `box-shadow`
+  - [ ] 支持 `CSS Transforms` 相关属性（难）
+  - [ ] 支持 `CSS Writing Modes` 相关属性（难）
 </details>
 <details>
   <summary><b>注意</b></summary>
