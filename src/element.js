@@ -11,7 +11,11 @@ class Element {
     Object.assign(this, nodesRef);
   }
 
-  /** 获取 wxml 元素的内容盒子大小数据 */
+  /**
+   * 获取 wxml 元素的内容盒子大小数据
+   * @param {String} sizing 盒子模型描述
+   * @returns {Object} 盒子大小数据
+   */
   getBoxSize(sizing = 'border') {
     if (this[`__${sizing}Box`]) return this[`__${sizing}Box`];
 
@@ -37,14 +41,14 @@ class Element {
         offsetWidth -= (padLeft + padRight);
         offsetHeight -= (padTop + padBottom);
       case 'padding':
-    if (borderWidth > 0) {
-      offsetLeft += borderWidth;
-      offsetTop += borderWidth;
-      offsetRight -= borderWidth;
-      offsetBottom -= borderWidth;
-      offsetWidth -= 2 * borderWidth;
-      offsetHeight -= 2 * borderWidth;
-    }
+        if (borderWidth > 0) {
+          offsetLeft += borderWidth;
+          offsetTop += borderWidth;
+          offsetRight -= borderWidth;
+          offsetBottom -= borderWidth;
+          offsetWidth -= 2 * borderWidth;
+          offsetHeight -= 2 * borderWidth;
+        }
         break;
       default:
     }
@@ -61,7 +65,10 @@ class Element {
     return this[`__${sizing}Box`];
   }
 
-  /** 获取 wxml 元素的边框数据 */
+  /**
+   * 获取 wxml 元素的边框数据
+   * @returns {Object} 边框数据
+   */
   getBorder() {
     if (this.__border) return this.__border;
     let borderWidth = 0;
@@ -86,7 +93,10 @@ class Element {
     return this.__border;
   }
 
-  /** 获取 wxml 元素的背景色数据 */
+  /**
+   * 获取 wxml 元素的背景色数据
+   * @returns {Object} 背景色数据
+   */
   getBackgroundColor() {
     if (this.__backgroundColor) return this.__backgroundColor;
     let rColor = 0;
@@ -115,7 +125,10 @@ class Element {
     return this.__backgroundColor;
   }
 
-  /** 获取 wxml 元素的阴影数据 */
+  /**
+   * 获取 wxml 元素的阴影数据
+   * @returns {Object} 阴影数据
+   */
   getBoxShadow() {
     if (this.__boxShadow) return this.__boxShadow;
     let color = '';
@@ -140,7 +153,10 @@ class Element {
     return this.__boxShadow;
   }
 
-  /** 获取 wxml 元素的边缘圆角数据 */
+  /**
+   * 获取 wxml 元素的边缘圆角数据
+   * @returns {Object} 圆角数据
+   */
   getBorderRadius() {
     if (this.__borderRadius) return this.__borderRadius;
     let [leftTop, topLeft] = this['border-top-left-radius'].split(' ');
