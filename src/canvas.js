@@ -40,7 +40,7 @@ const getCanvas = (component, selector) => new Promise(
 /**
  * 绘制重复背景图案
  * @param {CanvasRenderingContext2D} ctx 画布上下文
- * @param {Object} content wxml 元素的盒子模型
+ * @param {Object} clipBox wxml 元素背景延伸的盒子模型
  * @param {Image} image 图片元素对象
  * @param {Number} x image 的左上角在目标画布上 X 轴坐标
  * @param {Number} y image 的左上角在目标画布上 Y 轴坐标
@@ -52,7 +52,7 @@ const getCanvas = (component, selector) => new Promise(
  * @param {Number} stepY Y 轴坐标的步进数
  */
 const drawImageRepeated = (
-  ctx, content, image,
+  ctx, clipBox, image,
   x, y, width, height,
   repeatX = false, repeatY = false,
   stepX = 0, stepY = 0,
@@ -63,32 +63,32 @@ const drawImageRepeated = (
     x + stepX * width, y + stepY * height, width, height,
   );
   if (repeatX) {
-    if (stepX > -1 && x + (stepX + 1) * width < content.right) {
+    if (stepX > -1 && x + (stepX + 1) * width < clipBox.right) {
       drawImageRepeated(
-        ctx, content, image,
+        ctx, clipBox, image,
         x, y, width, height,
         true, false,
         stepX + 1, stepY,
       );
-    } if (stepX < 1 && x + stepX * width > content.left) {
+    } if (stepX < 1 && x + stepX * width > clipBox.left) {
       drawImageRepeated(
-        ctx, content, image,
+        ctx, clipBox, image,
         x, y, width, height,
         true, false,
         stepX - 1, stepY,
       );
     }
   } if (repeatY) {
-    if (stepY > -1 && y + (stepY + 1) * height < content.bottom) {
+    if (stepY > -1 && y + (stepY + 1) * height < clipBox.bottom) {
       drawImageRepeated(
-        ctx, content, image,
+        ctx, clipBox, image,
         x, y, width, height,
         repeatX && repeatY, true,
         stepX, stepY + 1,
       );
-    } if (stepY < 1 && y + stepY * height > content.top) {
+    } if (stepY < 1 && y + stepY * height > clipBox.top) {
       drawImageRepeated(
-        ctx, content, image,
+        ctx, clipBox, image,
         x, y, width, height,
         repeatX && repeatY, true,
         stepX, stepY - 1,
@@ -174,60 +174,75 @@ class Canvas {
     this.context.save();
   }
 
-  /** 绘制/裁切 wxml 元素的边框路径 */
-  clipElementPath() {
+  /**
+   * 绘制/裁切 wxml 元素的边框路径
+   * @param {String} sizing 盒子模型描述
+   */
+  clipElementPath(sizing = 'border') {
     const { context: ctx, element } = this;
+    const content = element.getBoxSize(sizing);
+
     ctx.beginPath();
     if (element['border-radius'] !== '0px') {
       const radius = element.getBorderRadius();
       /** 旋转角度的单位：iOS 角度、Android 弧度 */
       const unitRotateAngle = IS_IOS ? 1 : Math.PI / 180;
+
+      /** 元素左外边距 与 内容左外边距 的差值 */
+      const diffLeft = content.left - element.left;
+      /** 元素右外边距 与 内容右外边距 的差值 */
+      const diffRight = element.right - content.right;
+      /** 元素顶外边距 与 内容顶外边距 的差值 */
+      const diffTop = content.top - element.top;
+      /** 元素底外边距 与 内容底外边距 的差值 */
+      const diffBottom = element.bottom - content.bottom;
+
       ctx.ellipse(
-        element.left + radius.leftTop,
-        element.top + radius.topLeft,
-        radius.leftTop,
-        radius.topLeft,
+        content.left + radius.leftTop - diffLeft,
+        content.top + radius.topLeft - diffTop,
+        radius.leftTop - diffLeft,
+        radius.topLeft - diffTop,
         -180 * unitRotateAngle,
         0,
         Math.PI / 2,
       );
-      ctx.lineTo(element.right - radius.rightTop, element.top);
+      ctx.lineTo(content.right - radius.rightTop + diffRight, content.top);
       ctx.ellipse(
-        element.right - radius.rightTop,
-        element.top + radius.topRight,
-        radius.topRight,
-        radius.rightTop,
+        content.right - radius.rightTop + diffRight,
+        content.top + radius.topRight - diffTop,
+        radius.topRight - diffTop,
+        radius.rightTop - diffRight,
         -90 * unitRotateAngle,
         0,
         Math.PI / 2,
       );
-      ctx.lineTo(element.right, element.bottom - radius.bottomRight);
+      ctx.lineTo(content.right, content.bottom - radius.bottomRight + diffBottom);
       ctx.ellipse(
-        element.right - radius.rightBottom,
-        element.bottom - radius.bottomRight,
-        radius.rightBottom,
-        radius.bottomRight,
+        content.right - radius.rightBottom + diffRight,
+        content.bottom - radius.bottomRight + diffBottom,
+        radius.rightBottom - diffRight,
+        radius.bottomRight - diffBottom,
         0,
         0,
         Math.PI / 2,
       );
-      ctx.lineTo(element.right - radius.rightBottom, element.bottom);
+      ctx.lineTo(content.right - radius.rightBottom + diffRight, content.bottom);
       ctx.ellipse(
-        element.left + radius.leftBottom,
-        element.bottom - radius.bottomLeft,
-        radius.bottomLeft,
-        radius.leftBottom,
+        content.left + radius.leftBottom - diffLeft,
+        content.bottom - radius.bottomLeft + diffBottom,
+        radius.bottomLeft - diffBottom,
+        radius.leftBottom - diffLeft,
         90 * unitRotateAngle,
         0,
         Math.PI / 2,
       );
-      ctx.lineTo(element.left, element.top + radius.topLeft);
+      ctx.lineTo(content.left, content.top + radius.topLeft - diffTop);
     } else {
       ctx.rect(
-        element.left,
-        element.top,
-        element.width,
-        element.height,
+        content.left,
+        content.top,
+        content.width,
+        content.height,
       );
     }
     ctx.closePath();
@@ -257,10 +272,15 @@ class Canvas {
     const images = backgroundImage.split(', ').reverse();
     if (images.length === 0) return;
 
+    const clips = element['background-clip'].split(', ').reverse();
     const sizes = element['background-size'].split(', ').reverse();
     const positions = element['background-position'].split(', ').reverse();
     const repeats = element['background-repeat'].split(', ').reverse();
 
+    /** 上个背景元素延伸模式是否为 border-box */
+    let isLast1BorderBox = true;
+    /** 所有背景元素延伸模式是否为 border-box */
+    let isAllBorderBox = true;
     for (let index = 0; index < images.length; index++) {
       if (!/url\(".*"\)/.test(images[index])) continue;
       const src = images[index].slice(5, -2);
@@ -321,13 +341,32 @@ class Canvas {
           : parseFloat(positionY))
       );
 
+      /** 当前背景元素重复模式 */
       const repeat = repeats[index];
+      /** 当前背景元素延伸模式 */
+      const boxSizing = clips[index].slice(0, -4);
+      /** 当前背景元素延伸盒子大小 */
+      const clipBox = element.getBoxSize(boxSizing);
+      // 减少边缘裁剪绘制次数
+      if (!isLast1BorderBox || boxSizing !== 'border') {
+        this.restoreContext();
+        this.clipElementPath(boxSizing);
+        ctx.clip();
+        if (isAllBorderBox) isAllBorderBox = false;
+      }
+      isLast1BorderBox = boxSizing === 'border';
       drawImageRepeated(
-        ctx, content, image,
+        ctx, clipBox, image,
         dx, dy, dWidth, dHeight,
         repeat === 'repeat' || repeat === 'repeat-x',
         repeat === 'repeat' || repeat === 'repeat-y',
       );
+    }
+
+    // 减少边缘裁剪绘制次数
+    if (!isAllBorderBox) {
+      this.restoreContext();
+      this.setElementBoundary();
     }
   }
 
