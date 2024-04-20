@@ -257,8 +257,29 @@ class Canvas {
   /** 绘制 wxml 元素的背景色 */
   drawBackgroundColor() {
     const { context: ctx, element } = this;
+    const clips = element['background-clip'].split(', ');
+
+    const colorClip = clips[clips.length - 1].slice(0, -4);
+    if (colorClip !== 'border') {
+      this.restoreContext();
+      this.clipElementPath(colorClip);
+      ctx.clip();
+    }
     ctx.fillStyle = element['background-color'];
     ctx.fillRect(element.left, element.top, element.width, element.height);
+
+    const gradientClip = clips[0].slice(0, -4);
+    if (gradientClip !== 'border') {
+      this.restoreContext();
+      this.clipElementPath(gradientClip);
+      ctx.clip();
+    }
+    drawGradient(ctx, element);
+
+    if (colorClip !== 'border' || gradientClip !== 'border') {
+      this.restoreContext();
+      this.setElementBoundary();
+    }
   }
 
   /** 绘制 wxml 元素的背景图案 */
