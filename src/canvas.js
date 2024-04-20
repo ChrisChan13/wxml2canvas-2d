@@ -287,7 +287,6 @@ class Canvas {
     const { context: ctx, element } = this;
     const backgroundImage = element['background-image'];
     if (!backgroundImage || backgroundImage === 'none') return;
-    drawGradient(ctx, element);
 
     const content = element.getBoxSize('padding');
     const images = backgroundImage.split(', ').reverse();
