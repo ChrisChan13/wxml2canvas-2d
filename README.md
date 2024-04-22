@@ -154,6 +154,10 @@ Page({
       <td>背景图像的重复方式，暂不支持 <code>space</code> 和 <code>round</code></td>
     </tr>
     <tr>
+      <td colspan=2><code>background-clip</code></td>
+      <td>背景图像的延伸方式，支持</td>
+    </tr>
+    <tr>
       <td rowspan="3"><code>border</code></td>
       <td><code>border-width</code></td>
       <td>边框宽度，暂仅支持四边同宽</td>
@@ -212,9 +216,9 @@ Page({
   <summary><b>TODOs</b></summary>
   <br>
 
-  - [ ] 支持 `background-image` 等背景图片样式
+  - [x] 支持 `background-image` 等背景图片样式
     - [x] 支持 `background-image` 基础属性设置
-    - [ ] 支持 `background-clip` 延伸范围
+    - [x] 支持 `background-clip` 延伸范围
   - [ ] 支持渐变类 `Gradients`
     - [x] 支持 `linear-gradient` 线性渐变
     - [x] 支持 `radial-gradient` 径向渐变
