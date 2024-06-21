@@ -89,12 +89,12 @@ Component({
           ...Element.IMAGE_COMPUTED_STYLE,
         ],
       };
-      const [[container]] = await Element.getNodesRef(`.${containerClass}`, fields, page);
+      const [container] = await Element.getNodesRef(`.${containerClass}`, fields, page);
       await this.setDataSync({
         canvasWidth: container.width * scale,
         canvasHeight: container.height * scale,
       });
-      const [items] = await Element.getNodesRef(`.${containerClass} .${itemClass}`, fields, page);
+      const items = await Element.getNodesRef(`.${containerClass} .${itemClass}`, fields, page);
 
       const canvas = this.canvas = new Canvas(this, '#wxml2canvas');
       await canvas.init(container, scale);

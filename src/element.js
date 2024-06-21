@@ -1,4 +1,26 @@
 /**
+ * 获取部分指定字段（与布局位置字段重名）
+ * @param {Object} nodesRef WXML 节点信息对象
+ * @returns {Object} 指定字段对象
+ */
+const getComputedRect = (nodesRef) => {
+  let {
+    left, right,
+    bottom, top,
+    width, height,
+  } = nodesRef;
+  if (left !== 'auto') left = parseFloat(left);
+  if (right !== 'auto') right = parseFloat(right);
+  if (top !== 'auto') top = parseFloat(top);
+  if (bottom !== 'auto') bottom = parseFloat(bottom);
+  width = parseFloat(width);
+  height = parseFloat(height);
+  return {
+    left, right, bottom, top, width, height,
+  };
+};
+
+/**
  * wxml 元素工具类
  *
  * 实例化：
@@ -250,6 +272,10 @@ class Element {
 
 /** 节点通用属性名 */
 Element.COMMON_PROPERTIES = [];
+/** 节点固定样式名（可能与节点其他字段重名） */
+Element.CONSTANT_COMPUTED_STYLE = [
+  'width', 'height', 'left', 'top', 'right', 'bottom',
+];
 /** 节点通用样式名 */
 Element.COMMON_COMPUTED_STYLE = [
   'background-color', 'border-radius', 'background-image',
@@ -283,8 +309,23 @@ Element.IMAGE_COMPUTED_STYLE = [];
  */
 Element.getNodesRef = (selector, fields, page) => new Promise((resolve) => {
   const query = page.createSelectorQuery();
-  query.selectAll(selector).fields(fields).exec((res) => {
-    resolve(res);
+  const nodesRef = [];
+  const refs = query.selectAll(selector);
+  refs.fields(fields, (res) => {
+    nodesRef.push(...res);
+  });
+  refs.fields({
+    computedStyle: Element.CONSTANT_COMPUTED_STYLE,
+  }, (res) => {
+    res.map((item, index) => {
+      Object.assign(nodesRef[index], {
+        __computedRect: getComputedRect(item),
+      });
+      return item;
+    });
+  });
+  query.exec(() => {
+    resolve(nodesRef);
   });
 });
 
