@@ -485,40 +485,40 @@ class Canvas {
     lineHeight = content.height / maxLines;
 
     // 单行文字避免字体表现差异
-    if (maxLines === 1 && element['overflow'] !== 'hidden') {
+    if (maxLines === 1 && element.overflow !== 'hidden') {
       lineText = element.dataset.text;
     } else {
-    // eslint-disable-next-line no-restricted-syntax
-    for (const char of `${element.dataset.text}`) {
-      // 判断是否需要换行
-      if (ctx.measureText(lineText + char).width > Math.ceil(content.width)) {
-        const isTextOverflow = (lines + 1) === maxLines;
-        // 判断是否多余文字使用 ... 展示
-        if (isTextOverflow && element['text-overflow'] === 'ellipsis') {
-          do {
-            lineText = lineText.slice(0, -1);
-          } while (ctx.measureText(`${lineText}...`).width > Math.ceil(content.width));
-          lineText = `${lineText}...`;
-        }
-        ctx.fillText(
-          lineText,
-          content.left + (element['text-align'] === 'center' ? content.width / 2 : 0),
-          content.top + fontSize * FONT_SIZE_OFFSET + (
-            fontSize === lineHeight ? 0 : lineHeight * LINE_HEIGHT_OFFSET
-          ) + lines * lineHeight,
+      // eslint-disable-next-line no-restricted-syntax
+      for (const char of `${element.dataset.text}`) {
+        // 判断是否需要换行
+        if (ctx.measureText(lineText + char).width > Math.ceil(content.width)) {
+          const isTextOverflow = (lines + 1) === maxLines;
+          // 判断是否多余文字使用 ... 展示
+          if (isTextOverflow && element['text-overflow'] === 'ellipsis') {
+            do {
+              lineText = lineText.slice(0, -1);
+            } while (ctx.measureText(`${lineText}...`).width > Math.ceil(content.width));
+            lineText = `${lineText}...`;
+          }
+          ctx.fillText(
+            lineText,
+            content.left + (element['text-align'] === 'center' ? content.width / 2 : 0),
+            content.top + fontSize * FONT_SIZE_OFFSET + (
+              fontSize === lineHeight ? 0 : lineHeight * LINE_HEIGHT_OFFSET
+            ) + lines * lineHeight,
             content.width,
-        );
-        if (isTextOverflow) {
-          lineText = '';
-          break;
+          );
+          if (isTextOverflow) {
+            lineText = '';
+            break;
+          } else {
+            lineText = char;
+            lines += 1;
+          }
         } else {
-          lineText = char;
-          lines += 1;
+          lineText += char;
         }
-      } else {
-        lineText += char;
       }
-    }
     }
 
     // 若不超出最高行数范围，绘制剩余文字
