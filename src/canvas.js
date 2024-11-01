@@ -8,6 +8,8 @@ const LINE_HEIGHT_OFFSET = 0.11;
 /** 字体大小位置校准 */
 // CSS 与 画布 的 font-size 存在数值偏差，暂时以常数换算实现近似结果
 const FONT_SIZE_OFFSET = 0.08;
+/** 换行符 */
+const LINE_BREAK_SYMBOL = '\n';
 
 const {
   platform: SYS_PLATFORM,
@@ -490,14 +492,18 @@ class Canvas {
     } else {
       // eslint-disable-next-line no-restricted-syntax
       for (const char of `${element.dataset.text}`) {
+        // 判断换行符强制换行
+        const isForcedLineBreak = char === LINE_BREAK_SYMBOL;
         // 判断是否需要换行
-        if (ctx.measureText(lineText + char).width > Math.ceil(content.width)) {
+        if (isForcedLineBreak
+          || ctx.measureText(lineText + char).width > Math.ceil(content.width)
+        ) {
           const isTextOverflow = (lines + 1) === maxLines;
           // 判断是否多余文字使用 ... 展示
           if (isTextOverflow && element['text-overflow'] === 'ellipsis') {
-            do {
+            while (ctx.measureText(`${lineText}...`).width > Math.ceil(content.width)) {
               lineText = lineText.slice(0, -1);
-            } while (ctx.measureText(`${lineText}...`).width > Math.ceil(content.width));
+            }
             lineText = `${lineText}...`;
           }
           ctx.fillText(
@@ -512,7 +518,7 @@ class Canvas {
             lineText = '';
             break;
           } else {
-            lineText = char;
+            lineText = isForcedLineBreak ? '' : char;
             lines += 1;
           }
         } else {
