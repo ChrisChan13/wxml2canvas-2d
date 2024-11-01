@@ -284,6 +284,7 @@ Element.COMMON_COMPUTED_STYLE = [
   'border', 'box-shadow', 'opacity', 'background-clip',
   'border-top-left-radius', 'border-top-right-radius',
   'border-bottom-right-radius', 'border-bottom-left-radius',
+  'overflow',
 ];
 /** 文字节点特殊属性名 */
 Element.TEXT_PROPERTIES = [];
