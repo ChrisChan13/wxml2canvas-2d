@@ -210,6 +210,10 @@ Page({
       <td colspan=2><code>color</code></td>
       <td>文字颜色，支持</td>
     </tr>
+    <tr>
+      <td colspan=2><code>text-indent</code></td>
+      <td>首行缩进，支持</td>
+    </tr>
   </table>
 </details>
 <details>

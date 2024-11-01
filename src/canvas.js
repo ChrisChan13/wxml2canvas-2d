@@ -463,11 +463,13 @@ class Canvas {
     ctx.textAlign = element['text-align'];
     ctx.fillStyle = element.color;
     const fontSize = parseFloat(element['font-size']);
+    const isTextCentered = element['text-align'] === 'center';
 
     // 小程序画布中无实际表现，暂不支持
     // ctx.letterSpacing = element['letter-spacing'];
     // ctx.wordSpacing = element['word-spacing'];
 
+    /** 文字行高 */
     let lineHeight;
     if (!Number.isNaN(+element['line-height'])) {
       lineHeight = fontSize * +element['line-height'];
@@ -475,6 +477,15 @@ class Canvas {
       lineHeight = parseFloat(element['line-height']);
     } else {
       lineHeight = fontSize * DEFAULT_LINE_HEIGHT;
+    }
+    /** 首行缩进 */
+    let textIndent;
+    if (/em/.test(element['text-indent'])) {
+      textIndent = fontSize * +element['text-indent'];
+    } else if (/px/.test(element['text-indent'])) {
+      textIndent = parseFloat(element['text-indent']);
+    } else if (/%/.test(element['text-indent'])) {
+      textIndent = (parseFloat(element['text-indent']) / 100) * content.width;
     }
 
     /** 单行内容，逐行显示 */
@@ -485,34 +496,39 @@ class Canvas {
     const maxLines = Math.round(content.height / lineHeight);
     // 消除行高计算偏差
     lineHeight = content.height / maxLines;
+    /** 文字行宽 */
+    let lineWidth;
 
     // 单行文字避免字体表现差异
     if (maxLines === 1 && element.overflow !== 'hidden') {
+      lineWidth = Math.ceil(content.width - textIndent);
       lineText = element.dataset.text;
     } else {
       // eslint-disable-next-line no-restricted-syntax
       for (const char of `${element.dataset.text}`) {
         // 判断换行符强制换行
         const isForcedLineBreak = char === LINE_BREAK_SYMBOL;
+        // 判断是否首行缩进
+        lineWidth = Math.ceil(content.width - (lines === 0 ? textIndent : 0));
         // 判断是否需要换行
         if (isForcedLineBreak
-          || ctx.measureText(lineText + char).width > Math.ceil(content.width)
+          || ctx.measureText(lineText + char).width > lineWidth
         ) {
           const isTextOverflow = (lines + 1) === maxLines;
           // 判断是否多余文字使用 ... 展示
           if (isTextOverflow && element['text-overflow'] === 'ellipsis') {
-            while (ctx.measureText(`${lineText}...`).width > Math.ceil(content.width)) {
+            while (ctx.measureText(`${lineText}...`).width > lineWidth) {
               lineText = lineText.slice(0, -1);
             }
             lineText = `${lineText}...`;
           }
           ctx.fillText(
             lineText,
-            content.left + (element['text-align'] === 'center' ? content.width / 2 : 0),
+            content.left + (lines === 0 ? textIndent : 0) + (isTextCentered ? lineWidth / 2 : 0),
             content.top + fontSize * FONT_SIZE_OFFSET + (
               fontSize === lineHeight ? 0 : lineHeight * LINE_HEIGHT_OFFSET
             ) + lines * lineHeight,
-            content.width,
+            lineWidth,
           );
           if (isTextOverflow) {
             lineText = '';
@@ -531,11 +547,11 @@ class Canvas {
     if ((lines + 1) <= maxLines && lineText) {
       ctx.fillText(
         lineText,
-        content.left + (element['text-align'] === 'center' ? content.width / 2 : 0),
+        content.left + (lines === 0 ? textIndent : 0) + (isTextCentered ? lineWidth / 2 : 0),
         content.top + fontSize * FONT_SIZE_OFFSET + (
           fontSize === lineHeight ? 0 : lineHeight * LINE_HEIGHT_OFFSET
         ) + lines * lineHeight,
-        content.width,
+        lineWidth,
       );
     }
   }

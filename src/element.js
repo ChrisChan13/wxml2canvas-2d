@@ -291,7 +291,7 @@ Element.TEXT_PROPERTIES = [];
 /** 文字节点特殊样式名 */
 Element.TEXT_COMPUTED_STYLE = [
   'font-family', 'font-size', 'font-weight', 'text-align',
-  'line-height', 'text-overflow', 'color',
+  'line-height', 'text-overflow', 'color', 'text-indent',
   // 'letter-spacing', 'word-spacing',
 ];
 /** 图片节点特殊属性名 */
