@@ -10,10 +10,7 @@ const drawElement = async (canvas, element) => {
   // 设置画布的当前 wxml 元素上下文（必要）
   canvas.setElement(element);
 
-  if (element.getBoxShadow().color) {
-    canvas.drawBoxShadow();
-  }
-  canvas.setElementBoundary();
+  canvas.drawBoxShadow();
   canvas.drawBackgroundColor();
   await canvas.drawBackgroundImage();
   if (element.src) {
@@ -21,9 +18,7 @@ const drawElement = async (canvas, element) => {
   } else if (element.dataset.text) {
     canvas.drawText();
   }
-  if (element.getBorder().width > 0) {
-    canvas.drawBorder();
-  }
+  canvas.drawBorder();
   canvas.restoreContext();
 };
 

@@ -154,6 +154,7 @@ class Canvas {
   setElement(element) {
     this.element = element;
     this.context.globalAlpha = +element.opacity;
+    this.context.save();
   }
 
   /**
@@ -250,9 +251,11 @@ class Canvas {
     ctx.closePath();
   }
 
-  /** 设置 wxml 元素的边界 */
-  setElementBoundary() {
-    this.clipElementPath();
+  /** 设置 wxml 元素的边界
+   * @param {String} sizing 盒子模型描述
+   */
+  setElementBoundary(sizing = 'border') {
+    this.clipElementPath(sizing);
     this.context.clip();
   }
 
@@ -260,12 +263,13 @@ class Canvas {
   drawBackgroundColor() {
     const { context: ctx, element } = this;
     const clips = element['background-clip'].split(', ');
-
     const colorClip = clips[clips.length - 1].slice(0, -4);
+
+    this.restoreContext();
     if (colorClip !== 'border') {
-      this.restoreContext();
-      this.clipElementPath(colorClip);
-      ctx.clip();
+      this.setElementBoundary(colorClip);
+    } else {
+      this.setElementBoundary();
     }
     ctx.fillStyle = element['background-color'];
     ctx.fillRect(element.left, element.top, element.width, element.height);
@@ -273,15 +277,10 @@ class Canvas {
     const gradientClip = clips[0].slice(0, -4);
     if (gradientClip !== 'border') {
       this.restoreContext();
-      this.clipElementPath(gradientClip);
-      ctx.clip();
+      this.setElementBoundary(gradientClip);
     }
     drawGradient(ctx, element);
-
-    if (colorClip !== 'border' || gradientClip !== 'border') {
-      this.restoreContext();
-      this.setElementBoundary();
-    }
+    this.restoreContext();
   }
 
   /** 绘制 wxml 元素的背景图案 */
@@ -293,6 +292,8 @@ class Canvas {
     const content = element.getBoxSize('padding');
     const images = backgroundImage.split(', ').reverse();
     if (images.length === 0) return;
+    this.restoreContext();
+    this.setElementBoundary();
 
     const clips = element['background-clip'].split(', ').reverse();
     const sizes = element['background-size'].split(', ').reverse();
@@ -372,8 +373,7 @@ class Canvas {
       // 减少边缘裁剪绘制次数
       if (!isLast1BorderBox || boxSizing !== 'border') {
         this.restoreContext();
-        this.clipElementPath(boxSizing);
-        ctx.clip();
+        this.setElementBoundary(boxSizing);
         if (isAllBorderBox) isAllBorderBox = false;
       }
       isLast1BorderBox = boxSizing === 'border';
@@ -384,17 +384,14 @@ class Canvas {
         repeat === 'repeat' || repeat === 'repeat-y',
       );
     }
-
-    // 减少边缘裁剪绘制次数
-    if (!isAllBorderBox) {
-      this.restoreContext();
-      this.setElementBoundary();
-    }
+    this.restoreContext();
   }
 
   /** 绘制 wxml 的 image 元素 */
   async drawImage() {
     const { element } = this;
+    this.restoreContext();
+    this.setElementBoundary();
     const image = await this.createImage(element.src);
     let dx;
     let dy;
@@ -450,6 +447,7 @@ class Canvas {
       dHeight = content.height;
     }
     this.context.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+    this.restoreContext();
   }
 
   /** 绘制 wxml 的 text 元素 */
@@ -457,8 +455,8 @@ class Canvas {
     const { context: ctx, element } = this;
     const content = element.getBoxSize('content');
     const shadow = element.getTextShadow();
+    this.restoreContext();
     if (shadow.color) {
-      this.restoreContext();
       ctx.shadowColor = shadow.color;
       ctx.shadowBlur = shadow.blur;
       ctx.shadowOffsetX = shadow.offsetX;
@@ -474,8 +472,8 @@ class Canvas {
     const isTextCentered = element['text-align'] === 'center';
 
     // 小程序画布中无实际表现，暂不支持
-    // ctx.letterSpacing = element['letter-spacing'];
-    // ctx.wordSpacing = element['word-spacing'];
+    ctx.letterSpacing = element['letter-spacing'];
+    ctx.wordSpacing = element['word-spacing'];
 
     /** 文字行高 */
     let lineHeight;
@@ -562,17 +560,16 @@ class Canvas {
         lineWidth,
       );
     }
-
-    if (shadow.color) {
-      this.restoreContext();
-      this.setElementBoundary();
-    }
+    this.restoreContext();
   }
 
   /** 绘制 wxml 元素边框 */
   drawBorder() {
     const { context: ctx, element } = this;
     const border = element.getBorder();
+    if (border.width === 0) return;
+    this.restoreContext();
+    this.setElementBoundary();
     ctx.strokeStyle = border.color;
     ctx.lineWidth = border.width * 2;
     if (border.style === 'dashed') {
@@ -581,25 +578,25 @@ class Canvas {
     }
     this.clipElementPath();
     ctx.stroke();
+    this.restoreContext();
   }
 
   /** 绘制 wxml 元素阴影 */
   drawBoxShadow() {
     const { context: ctx, element } = this;
-    const background = element.getBackgroundColor();
     const shadow = element.getBoxShadow();
+    if (!shadow.color) return;
+    this.restoreContext();
     ctx.shadowColor = shadow.color;
     ctx.shadowBlur = shadow.blur;
     ctx.shadowOffsetX = shadow.offsetX;
     ctx.shadowOffsetY = shadow.offsetY;
+    const background = element.getBackgroundColor();
     // 必须填充背景色，否则阴影不可见
     ctx.fillStyle = `rgba(${background.rColor}, ${background.gColor}, ${background.bColor}, 1)`;
     this.clipElementPath();
     ctx.fill();
-    ctx.shadowColor = 'rgba(0, 0, 0, 0)';
-    ctx.shadowBlur = 0;
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 0;
+    this.restoreContext();
   }
 
   /**
