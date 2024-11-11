@@ -456,6 +456,14 @@ class Canvas {
   drawText() {
     const { context: ctx, element } = this;
     const content = element.getBoxSize('content');
+    const shadow = element.getTextShadow();
+    if (shadow.color) {
+      this.restoreContext();
+      ctx.shadowColor = shadow.color;
+      ctx.shadowBlur = shadow.blur;
+      ctx.shadowOffsetX = shadow.offsetX;
+      ctx.shadowOffsetY = shadow.offsetY;
+    }
 
     // 固定格式：font-weight font-size font-family
     ctx.font = `${element['font-weight']} ${element['font-size']} ${element['font-family']}`;
@@ -553,6 +561,11 @@ class Canvas {
         ) + lines * lineHeight,
         lineWidth,
       );
+    }
+
+    if (shadow.color) {
+      this.restoreContext();
+      this.setElementBoundary();
     }
   }
 

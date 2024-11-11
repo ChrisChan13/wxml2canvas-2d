@@ -176,6 +176,35 @@ class Element {
   }
 
   /**
+   * 获取 wxml 文本的阴影数据
+   * @returns {Object} 阴影数据
+   */
+  getTextShadow() {
+    if (this.__textShadow) return this.__textShadow;
+    let color = '';
+    let blur = 0;
+    let offsetX = 0;
+    let offsetY = 0;
+    if (this['text-shadow'] !== 'none') {
+      let tempStr;
+      [tempStr, offsetY, blur] = this['text-shadow'].split('px ');
+      const tempIdx = tempStr.lastIndexOf(' ');
+      color = tempStr.slice(0, tempIdx);
+      offsetX = tempStr.slice(tempIdx + 1);
+      blur = parseFloat(blur);
+    }
+    Object.assign(this, {
+      __textShadow: {
+        blur,
+        color,
+        offsetX,
+        offsetY,
+      },
+    });
+    return this.__textShadow;
+  }
+
+  /**
    * 获取 wxml 元素的边缘圆角数据
    * @returns {Object} 圆角数据
    */
@@ -292,6 +321,7 @@ Element.TEXT_PROPERTIES = [];
 Element.TEXT_COMPUTED_STYLE = [
   'font-family', 'font-size', 'font-weight', 'text-align',
   'line-height', 'text-overflow', 'color', 'text-indent',
+  'text-shadow',
   // 'letter-spacing', 'word-spacing',
 ];
 /** 图片节点特殊属性名 */
