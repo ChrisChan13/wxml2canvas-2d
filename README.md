@@ -218,6 +218,10 @@ Page({
       <td colspan=2><code>text-shadow</code></td>
       <td>文字阴影，支持</td>
     </tr>
+    <tr>
+      <td colspan=2><code>filter</code></td>
+      <td>滤镜效果，支持</td>
+    </tr>
   </table>
 </details>
 <details>

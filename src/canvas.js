@@ -154,6 +154,7 @@ class Canvas {
   setElement(element) {
     this.element = element;
     this.context.globalAlpha = +element.opacity;
+    this.context.filter = element.filter;
     this.context.save();
   }
 
