@@ -471,6 +471,7 @@ class Canvas {
     ctx.fillStyle = element.color;
     const fontSize = parseFloat(element['font-size']);
     const isTextCentered = element['text-align'] === 'center';
+    const isTextRightward = element['text-align'] === 'right';
 
     // 小程序画布中无实际表现，暂不支持
     ctx.letterSpacing = element['letter-spacing'];
@@ -508,6 +509,7 @@ class Canvas {
 
     // 单行文字避免字体表现差异
     if (maxLines === 1 && element.overflow !== 'hidden') {
+      // 向上取整避免宽度偏小，文字变形
       lineWidth = Math.ceil(content.width - textIndent);
       lineText = element.dataset.text;
     } else {
@@ -531,7 +533,9 @@ class Canvas {
           }
           ctx.fillText(
             lineText,
-            content.left + (lines === 0 ? textIndent : 0) + (isTextCentered ? lineWidth / 2 : 0),
+            isTextRightward ? content.right : content.left + (
+              lines === 0 ? textIndent : 0
+            ) + (isTextCentered ? lineWidth / 2 : 0),
             content.top + fontSize * FONT_SIZE_OFFSET + (
               fontSize === lineHeight ? 0 : lineHeight * LINE_HEIGHT_OFFSET
             ) + lines * lineHeight,
@@ -554,7 +558,9 @@ class Canvas {
     if ((lines + 1) <= maxLines && lineText) {
       ctx.fillText(
         lineText,
-        content.left + (lines === 0 ? textIndent : 0) + (isTextCentered ? lineWidth / 2 : 0),
+        isTextRightward ? content.right : content.left + (
+          lines === 0 ? textIndent : 0
+        ) + (isTextCentered ? lineWidth / 2 : 0),
         content.top + fontSize * FONT_SIZE_OFFSET + (
           fontSize === lineHeight ? 0 : lineHeight * LINE_HEIGHT_OFFSET
         ) + lines * lineHeight,

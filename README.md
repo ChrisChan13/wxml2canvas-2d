@@ -275,5 +275,8 @@ Page({
 
 ## 效果预览
 
-<img src="screenshot-0.png" alt="效果预览" width="42%">
-<img src="screenshot-1.png" alt="效果预览" width="42%">
+<div style="display: flex;">
+  <img src="screenshot-0.png" alt="效果预览" style="flex: 1;">
+  <img src="screenshot-1.png" alt="效果预览" style="flex: 1;">
+</div>
+
