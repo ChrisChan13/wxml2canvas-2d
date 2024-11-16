@@ -5,12 +5,16 @@ Page({
   },
   async onDrawCanvas() {
     const canvas = this.selectComponent('#wxml2canvas');
+    wx.showLoading({
+      title: '生成中..',
+    });
     console.time('生成耗时');
     await canvas.draw();
     console.timeEnd('生成耗时');
     setTimeout(async () => {
       const url = await canvas.toTempFilePath();
       this.setData({ tempImage: url });
+      wx.hideLoading();
     }, 300);
   },
   onPreviewCanvas() {

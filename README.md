@@ -219,8 +219,16 @@ Page({
       <td>文字阴影，支持</td>
     </tr>
     <tr>
+      <td colspan=2>letter-spacing</td>
+      <td>字符间距，部分平台支持：Windows</td>
+    </tr>
+    <tr>
+      <td colspan=2>word-spacing</td>
+      <td>单词间距，部分平台支持：Windows</td>
+    </tr>
+    <tr>
       <td colspan=2>filter</td>
-      <td>滤镜效果，支持</td>
+      <td>滤镜效果，部分平台支持：Windows</td>
     </tr>
   </table>
 </details>

@@ -1,7 +1,7 @@
 import { drawGradient } from './gradient';
 
 /** CSS 默认行高 */
-const DEFAULT_LINE_HEIGHT = 1.35;
+const DEFAULT_LINE_HEIGHT = 1.4;
 /** 行高位置校准 */
 // CSS 与 画布 的 line-height 存在数值偏差，暂时以常数换算实现近似结果
 const LINE_HEIGHT_OFFSET = 0.11;
@@ -154,6 +154,7 @@ class Canvas {
   setElement(element) {
     this.element = element;
     this.context.globalAlpha = +element.opacity;
+    // 仅在开发工具、Windows 及部分真机上生效
     this.context.filter = element.filter;
     this.context.save();
   }
@@ -464,18 +465,22 @@ class Canvas {
       ctx.shadowOffsetY = shadow.offsetY;
     }
 
-    // 固定格式：font-weight font-size font-family
+    // 固定格式（不可缺省）：font-weight font-size font-family
     ctx.font = `${element['font-weight']} ${element['font-size']} ${element['font-family']}`;
     ctx.textBaseline = 'top';
     ctx.textAlign = element['text-align'];
     ctx.fillStyle = element.color;
-    const fontSize = parseFloat(element['font-size']);
-    const isTextCentered = element['text-align'] === 'center';
-    const isTextRightward = element['text-align'] === 'right';
 
+    // 仅在 Windows 上生效，真机暂不支持
+    ctx.textLetterSpacing = parseFloat(element['letter-spacing']) || 0;
+    ctx.textWordSpacing = parseFloat(element['word-spacing']);
     // 小程序画布中无实际表现，暂不支持
     ctx.letterSpacing = element['letter-spacing'];
     ctx.wordSpacing = element['word-spacing'];
+
+    const fontSize = parseFloat(element['font-size']);
+    const isTextCentered = element['text-align'] === 'center';
+    const isTextRightward = element['text-align'] === 'right';
 
     /** 文字行高 */
     let lineHeight;
@@ -609,8 +614,10 @@ class Canvas {
   /**
    * 导出画布至临时图片
    * @param {Boolean} original 是否使用实机表现作为导出图片的尺寸；
-   * true 则导出当前实机设备渲染的尺寸，各设备的设备像素比不同，导出图片尺寸将有所不同；
-   * false 则导出以 750px 设计图为基准的尺寸，即与 CSS 中设置的 rpx 大小一致，全设备导出图片尺寸一致；
+   *
+   * `true` 则导出当前实机设备渲染的尺寸，各设备的设备像素比不同，导出图片尺寸将有所不同；
+   *
+   * `false` 则导出以 750px 设计图为基准的尺寸，即与 WXSS 中设置的 rpx 大小一致，全设备导出图片尺寸一致；
    * @returns {Promise<String>} 图片临时路径
    */
   async toTempFilePath(original = true) {
