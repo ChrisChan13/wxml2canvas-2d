@@ -29,6 +29,7 @@ const RPX_RATIO = 750 / SYS_WIDTH;
  */
 const getCanvas = (component, selector) => new Promise(
   (resolve) => {
+    if (selector) {
     const query = component.createSelectorQuery();
     query.select(selector).fields({
       node: true,
@@ -36,6 +37,13 @@ const getCanvas = (component, selector) => new Promise(
       const [{ node: canvas }] = res;
       resolve(canvas);
     });
+    } else {
+      const canvas = wx.createOffscreenCanvas({
+        type: '2d',
+        compInst: component,
+      });
+      resolve(canvas);
+    }
   },
 );
 
@@ -127,6 +135,7 @@ class Canvas {
   constructor(component, selector) {
     this.component = component;
     this.selector = selector;
+    this.isOffscreen = !selector;
   }
 
   /**
@@ -633,6 +642,18 @@ class Canvas {
     }
     const { tempFilePath } = await wx.canvasToTempFilePath(payload, this.component);
     return tempFilePath;
+  }
+
+  /**
+   * 导出画布至 Data URI（base64 编码）
+   *
+   * iOS、Mac 与 Windows 平台在离屏 Canvas 模式下使用 `wx.canvasToTempFilePath` 导出时会报错
+   *
+   * 可以使用 `Canvas.toDataURL` 搭配 `FileSystemManager.saveFile` 保存导出的图片
+   * @returns {String} URI
+   */
+  toDataURL() {
+    return this.canvas.toDataURL();
   }
 }
 

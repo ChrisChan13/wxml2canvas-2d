@@ -61,7 +61,7 @@ Page({
 });
 ```
 
-> **PS**：使用字体时，请注意在**生成画布内容前** [**加载对应的字体文件**](https://developers.weixin.qq.com/miniprogram/dev/api/ui/font/wx.loadFontFace.html)；
+> **PS**：使用字体时，请注意在**生成画布内容前** [**加载对应的字体文件**](https://developers.weixin.qq.com/miniprogram/dev/api/ui/font/wx.loadFontFace.html)；部分平台如 Windows 可能不支持画布使用自定义字体；离屏画布模式下，大部分设备均不支持画布使用自定义字体。
 
 ## API
 
@@ -72,6 +72,7 @@ Page({
 |container-class|String|根节点（容器）样式类名称|wxml2canvas-container|
 |item-class|String|内部节点样式类名称|wxml2canvas-item|
 |scale|Number|画布缩放比例|1|
+|offscreen|Boolean|是否使用离屏画布|false|
 
 ### 外部样式类
 
@@ -103,13 +104,20 @@ Page({
   </tr>
   <tr>
     <td>toTempFilePath</td>
-    <td>导出画布内容</td>
+    <td>导出画布至临时路径</td>
     <td>original</td>
     <td>Boolean</td>
     <td>true</td>
     <td>是否使用实机渲染尺寸<br>true：各设备像素比不同，导出结果尺寸不同<br>false：以 750px 为标准，与 WXSS 表现一致</td>
   </tr>
+  <tr>
+    <td>toDataURL</td>
+    <td>导出画布至 Data URI</td>
+    <td colspan=4>-</td>
+  </tr>
 </table>
+
+> **PS**：iOS、Mac 与 Windows 平台在**离屏画布模式**（offscreen 为 true）下使用 `wx.canvasToTempFilePath` 导出时会[报错](https://developers.weixin.qq.com/community/search?query=fail%2520invalid%2520viewId)，可以使用 `Canvas.toDataURL` 搭配 `FileSystemManager.saveFile` 保存导出的图片
 
 ### 其他
 
@@ -263,6 +271,7 @@ Page({
   - 绘制文字的阴影时，阴影的透明度将随着文字颜色的透明度等比改变，所以绘制文字的阴影时，请尽量设置该元素的文字颜色为不透明的实色
   - 绘制渐变图案时，请尽量在 CSS 中将渐变的色标按位置正序顺序依次书写，支持使用负值（径向渐变除外），暂未处理色标位置错乱情况下的表现形式，暂不支持控制渐变进程的插值提示
   - 设置渐变背景图案时，请尽量避免使用 black、white 等名词形式描述颜色，部分 iOS 设备不会自动转换颜色内容，难以匹配并识别颜色（目前发现部分 iOS 设备中，红色不管以任何形式描述，结果均显示为 red，暂时已处理，且仅处理颜色为 red 的情况）
+  - 开启离屏画布模式时，部分平台在绘制图片时，由 Canvas.createImage 创建的图片元素，相同的 src 只触发一次 onload 回调，目前只能避免对同一图片重复绘制
 </details>
 <details>
   <summary><b>开发注意</b></summary>

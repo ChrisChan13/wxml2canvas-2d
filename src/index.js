@@ -40,6 +40,8 @@ Component({
       type: Number,
       value: 1,
     },
+    // 是否使用离屏画布
+    offscreen: Boolean,
   },
   data: {
     // 画布宽度
@@ -68,7 +70,9 @@ Component({
         page = pages[pages.length - 1];
       }
 
-      const { containerClass, itemClass, scale } = this.data;
+      const {
+        containerClass, itemClass, scale, offscreen,
+      } = this.data;
       const fields = {
         size: true,
         rect: true,
@@ -91,7 +95,7 @@ Component({
       });
       const items = await Element.getNodesRef(`.${containerClass} .${itemClass}`, fields, page);
 
-      const canvas = this.canvas = new Canvas(this, '#wxml2canvas');
+      const canvas = this.canvas = new Canvas(...(offscreen ? [this] : [this, '#wxml2canvas']));
       await canvas.init(container, scale);
 
       // 绘制最外层容器 wxml 元素
@@ -116,6 +120,13 @@ Component({
     async toTempFilePath(original = true) {
       const tempFilePath = await this.canvas.toTempFilePath(original);
       return tempFilePath;
+    },
+    /**
+     * 导出画布至 Data URI
+     * @returns {String} URI
+     */
+    toDataURL() {
+      return this.canvas.toDataURL();
     },
   },
 });
