@@ -1,14 +1,6 @@
-/** 三角函数值 转换 弧度 换算比例 */
-const TRI2RAD_RATIO = Math.PI / 180;
-/** 椭圆形径向渐变的长短轴比例 */
-// 暂未找到 CSS 中椭圆形径向渐变的长短轴生成规律，以常数代替实现近似结果
-const SIDE2CORNER_RATIO = 1.4141;
-
-const {
-  platform: SYS_PLATFORM,
-} = wx.getSystemInfoSync();
-/** 是否为 Windows 平台 */
-const IS_WINDOWS = SYS_PLATFORM === 'windows';
+import {
+  TRI2RAD_RATIO, SIDE2CORNER_RATIO, IS_WINDOWS,
+} from './constants';
 
 /**
  * 获取 wxml 元素背景渐变类型

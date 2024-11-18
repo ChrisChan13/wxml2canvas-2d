@@ -292,8 +292,5 @@ Page({
 
 ## 效果预览
 
-<div style="display: flex;">
-  <img src="screenshot-0.png" alt="效果预览" style="flex: 1;">
-  <img src="screenshot-1.png" alt="效果预览" style="flex: 1;">
-</div>
-
+![效果预览](screenshot-0.png)
+![效果预览](screenshot-1.png)

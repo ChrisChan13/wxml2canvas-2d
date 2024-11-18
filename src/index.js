@@ -65,10 +65,8 @@ Component({
      * @param {PageObject} page 页面实例对象，默认当前页面实例
      */
     async draw(page) {
-      if (!page) {
-        const pages = getCurrentPages();
-        page = pages[pages.length - 1];
-      }
+      // 获取当前页面实例
+      if (!page) { [page] = getCurrentPages().slice(-1); }
 
       const {
         containerClass, itemClass, scale, offscreen,
@@ -112,9 +110,7 @@ Component({
     },
     /**
      * 把画布内容导出生成图片
-     * @param {Boolean} original 是否使用实机表现作为导出图片的尺寸；
-     * true 则导出当前实机设备渲染的尺寸，各设备的设备像素比不同，导出图片尺寸将有所不同；
-     * false 则导出以 750px 设计图为基准的尺寸，即与 CSS 中设置的 rpx 大小一致，全设备导出图片尺寸一致；
+     * @param {Boolean} original 是否使用实机表现作为导出图片的尺寸
      * @returns {Promise<String>} 图片临时路径
      */
     async toTempFilePath(original = true) {
@@ -123,7 +119,7 @@ Component({
     },
     /**
      * 导出画布至 Data URI
-     * @returns {String} URI
+     * @returns {String} Data URI
      */
     toDataURL() {
       return this.canvas.toDataURL();

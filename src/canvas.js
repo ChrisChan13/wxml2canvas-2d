@@ -1,25 +1,8 @@
+import {
+  DEFAULT_LINE_HEIGHT, LINE_HEIGHT_OFFSET, FONT_SIZE_OFFSET,
+  LINE_BREAK_SYMBOL, SYS_DPR, RPX_RATIO, IS_IOS,
+} from './constants';
 import { drawGradient } from './gradient';
-
-/** CSS 默认行高 */
-const DEFAULT_LINE_HEIGHT = 1.4;
-/** 行高位置校准 */
-// CSS 与 画布 的 line-height 存在数值偏差，暂时以常数换算实现近似结果
-const LINE_HEIGHT_OFFSET = 0.11;
-/** 字体大小位置校准 */
-// CSS 与 画布 的 font-size 存在数值偏差，暂时以常数换算实现近似结果
-const FONT_SIZE_OFFSET = 0.08;
-/** 换行符 */
-const LINE_BREAK_SYMBOL = '\n';
-
-const {
-  platform: SYS_PLATFORM,
-  pixelRatio: SYS_DPR,
-  windowWidth: SYS_WIDTH,
-} = wx.getSystemInfoSync();
-/** 是否为 iOS 平台 */
-const IS_IOS = SYS_PLATFORM === 'ios';
-/** 设备像素与 750px 设计图比例 */
-const RPX_RATIO = 750 / SYS_WIDTH;
 
 /**
  * 获取画布对象

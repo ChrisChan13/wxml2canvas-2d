@@ -1,6 +1,6 @@
 {
   "name": "wxml2canvas-2d",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "description": "基于微信小程序 2D Canvas 的画布组件，根据给定 WXML 结构以及 CSS 样式快速转换成 Canvas 元素",
   "main": "miniprogram_dist/index.js",
   "miniprogram": "miniprogram_dist",
