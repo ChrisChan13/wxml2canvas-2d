@@ -1,6 +1,6 @@
 import {
   DEFAULT_LINE_HEIGHT, LINE_HEIGHT_OFFSET, FONT_SIZE_OFFSET,
-  LINE_BREAK_SYMBOL, SYS_DPR, RPX_RATIO, IS_IOS,
+  LINE_BREAK_SYMBOL, SYS_DPR, RPX_RATIO,
 } from './constants';
 import { drawGradient } from './gradient';
 
@@ -183,7 +183,7 @@ class Canvas {
     if (element['border-radius'] !== '0px') {
       const radius = element.getBorderRadius();
       /** 旋转角度的单位：iOS 角度、Android 弧度 */
-      const unitRotateAngle = IS_IOS ? 1 : Math.PI / 180;
+      const unitRotateAngle = Math.PI / 180;
 
       /** 元素左外边距 与 内容左外边距 的差值 */
       const diffLeft = content.left - element.left;

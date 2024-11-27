@@ -279,7 +279,7 @@ Page({
 
   - 微信新版 Canvas 2D 接口基本与 Web Canvas API 对齐，但仍有部分 API 存在差异，随着微信版本或基础库更新，或许会提高相应 API 的支持度
   - iOS 平台对于 Path2D 的支持度不足，此 repo 已去除 Path2D 的相关应用，转而使用普通路径，相对应的路径生成次数会增多，绘制时长有所增加，但不多
-  - iOS 平台使用 CanvasContext.ellipse 以及 Path2D.ellipse 时，其中的参数 rotation 旋转角度所使用的角度单位不同：iOS 使用角度值，macOS 平台未知，其余使用弧度值
+  - 【已修复】 iOS 平台使用 CanvasContext.ellipse 以及 Path2D.ellipse 时，其中的参数 rotation 旋转角度所使用的角度单位不同：iOS 使用角度值，macOS 平台未知，其余使用弧度值
   - 绘制文字元素时，各机型和各平台对于 font-size、font-weight、line-height 的实际表现与 CSS 中的表现有细微不同，此 repo 暂时使用常量比例进行换算对齐，未彻底解决
   - 绘制元素的边框暂时只支持 solid 和 dashed 两种样式，其中 dashed 样式的边框使用 CanvasContext.setLineDash 实现，各机型和各平台的边框虚线间距表现均有差异，此 repo 暂时使用与边框宽度等比的间距表现虚线边框
   - 微信新版 Canvas API 目前不支持绘制椭圆形径向渐变图案，此 repo 使用 CanvasContext.scale 对圆形径向渐变图案进行放大或缩小，以实现椭圆形径向渐变图案，而在 closest-corner 与 farthest-corner 模式下的椭圆形径向渐变中，目前还未找出 CSS 在绘制椭圆形径向渐变图案时的长轴与短轴的大小的计算规则，暂时使用常量比例进行换算对齐，未彻底解决
