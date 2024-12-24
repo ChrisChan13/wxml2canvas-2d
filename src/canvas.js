@@ -13,13 +13,13 @@ import { drawGradient } from './gradient';
 const getCanvas = (component, selector) => new Promise(
   (resolve) => {
     if (selector) {
-    const query = component.createSelectorQuery();
-    query.select(selector).fields({
-      node: true,
-    }).exec((res) => {
-      const [{ node: canvas }] = res;
-      resolve(canvas);
-    });
+      const query = component.createSelectorQuery();
+      query.select(selector).fields({
+        node: true,
+      }).exec((res) => {
+        const [{ node: canvas }] = res;
+        resolve(canvas);
+      });
     } else {
       const canvas = wx.createOffscreenCanvas({
         type: '2d',
