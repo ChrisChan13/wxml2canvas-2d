@@ -63,10 +63,15 @@ Component({
     /**
      * 绘制画布内容
      * @param {PageObject} page 页面实例对象，默认当前页面实例
+     * @param {ComponentObject} component 组件实例对象
      */
-    async draw(page) {
-      // 获取当前页面实例
-      if (!page) { [page] = getCurrentPages().slice(-1); }
+    async draw(page, component) {
+      // 获取当前页面实例、组件实例
+      if (!page || !page.route) {
+        [page] = getCurrentPages().slice(-1);
+      } if (page && !page.route && !component) {
+        component = page;
+      }
 
       const {
         containerClass, itemClass, scale, offscreen,
@@ -86,12 +91,12 @@ Component({
           ...Element.IMAGE_COMPUTED_STYLE,
         ],
       };
-      const [container] = await Element.getNodesRef(`.${containerClass}`, fields, page);
+      const [container] = await Element.getNodesRef(`.${containerClass}`, fields, page, component);
       await this.setDataSync({
         canvasWidth: container.width * scale,
         canvasHeight: container.height * scale,
       });
-      const items = await Element.getNodesRef(`.${containerClass} .${itemClass}`, fields, page);
+      const items = await Element.getNodesRef(`.${containerClass} .${itemClass}`, fields, page, component);
 
       const canvas = this.canvas = new Canvas(...(offscreen ? [this] : [this, '#wxml2canvas']));
       await canvas.init(container, scale);

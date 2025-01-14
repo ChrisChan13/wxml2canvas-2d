@@ -335,10 +335,12 @@ Element.IMAGE_COMPUTED_STYLE = [];
  * @param {String} selector 选择器
  * @param {Object} fields 节点信息字段
  * @param {PageObject} page 页面实例对象
+ * @param {ComponentObject} component 组件实例对象
  * @returns {Promise<object>} 节点信息
  */
-Element.getNodesRef = (selector, fields, page) => new Promise((resolve) => {
+Element.getNodesRef = (selector, fields, page, component) => new Promise((resolve) => {
   const query = page.createSelectorQuery();
+  if (component) { query.in(component); }
   const nodesRef = [];
   const refs = query.selectAll(selector);
   refs.fields(fields, (res) => {
