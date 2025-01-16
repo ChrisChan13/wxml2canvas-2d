@@ -61,7 +61,7 @@ Page({
 });
 ```
 
-> **PS**：使用字体时，请注意在**生成画布内容前** [**加载对应的字体文件**](https://developers.weixin.qq.com/miniprogram/dev/api/ui/font/wx.loadFontFace.html)；部分平台如 Windows 可能不支持画布使用自定义字体；离屏画布模式下，大部分设备均不支持画布使用自定义字体。
+> **PS**：使用字体时，请注意在**生成画布内容前** [**加载对应的字体文件**](https://developers.weixin.qq.com/miniprogram/dev/api/ui/font/wx.loadFontFace.html)；部分平台如 Windows 可能不支持画布使用自定义字体（小程序基础库 [v3.6.6](https://developers.weixin.qq.com/miniprogram/dev/framework/release/#v3-6-6-2024-11-12) 及以上已修复）；离屏画布模式下，大部分设备均不支持画布使用自定义字体。
 
 ## API
 
@@ -123,7 +123,7 @@ Page({
   </tr>
 </table>
 
-> **PS**：iOS、Mac 与 Windows 平台在**离屏画布模式**（offscreen 为 true）下使用 `wx.canvasToTempFilePath` 导出时会[报错](https://developers.weixin.qq.com/community/search?query=fail%2520invalid%2520viewId)，可以使用 `Canvas.toDataURL` 搭配 `FileSystemManager.saveFile` 保存导出的图片
+> **PS**：iOS、Mac 与 Windows 平台在**离屏画布模式**（offscreen 为 true）下使用 `wx.canvasToTempFilePath` 导出时会[报错](https://developers.weixin.qq.com/community/search?query=fail%2520invalid%2520viewId)（小程序基础库 [v3.7.1](https://developers.weixin.qq.com/miniprogram/dev/framework/release/#v3-7-1-2024-11-26) 及以上已修复），可以使用 `Canvas.toDataURL` 搭配 `FileSystemManager.saveFile` 保存导出的图片
 
 ### 其他
 
