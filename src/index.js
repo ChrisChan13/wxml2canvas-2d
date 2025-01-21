@@ -67,10 +67,10 @@ Component({
      */
     async draw(page, component) {
       // 获取当前页面实例、组件实例
-      if (!page || !page.route) {
-        [page] = getCurrentPages().slice(-1);
-      } if (page && !page.route && !component) {
+      if (page && !page.route && !component) {
         component = page;
+      } if (!page || !page.route) {
+        [page] = getCurrentPages().slice(-1);
       }
 
       const {
