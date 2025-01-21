@@ -105,7 +105,7 @@ Page({
   <tr>
     <td>component</td>
     <td>ComponentObject</td>
-    <td>当前组件实例</td>
+    <td>-</td>
     <td>组件所在组件实例</td>
   </tr>
   <tr>
