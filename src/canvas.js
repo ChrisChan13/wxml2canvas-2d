@@ -498,7 +498,8 @@ class Canvas {
     /** 内容总行数 */
     let lines = 0;
     /** 计算元素内实际显示最大行数 */
-    const maxLines = Math.round(content.height / lineHeight);
+    // 向上取整避免行高过大，文字错位
+    const maxLines = Math.ceil(content.height / lineHeight);
     // 消除行高计算偏差
     lineHeight = content.height / maxLines;
     /** 文字行宽 */
