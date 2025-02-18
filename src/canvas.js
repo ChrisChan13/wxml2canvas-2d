@@ -253,6 +253,40 @@ class Canvas {
     this.context.clip();
   }
 
+  /** 设置 wxml 元素的变换矩阵 */
+  setTransform() {
+    const { context: ctx, element, container } = this;
+    const { transform } = element;
+    if (!transform || transform === 'none') return;
+    // 变换前的节点信息
+    Object.assign(element, {
+      ...element.__computedRect,
+      left: container.left + element.__computedRect.left,
+      top: container.top + element.__computedRect.top,
+      right: container.left + element.__computedRect.width,
+      bottom: container.top + element.__computedRect.height,
+    });
+    let [originX, originY] = element['transform-origin'].split(' ');
+    originX = parseFloat(originX);
+    originY = parseFloat(originY);
+    const [m11, m12, m21, m22, m41, m42] = transform.slice(7).slice(0, -1).split(', ');
+    ctx.translate(container.left + originX, container.top + originY);
+    ctx.transform(m11, m12, m21, m22, m41, m42);
+    ctx.translate(-container.left - originX, -container.top - originY);
+    ctx.save();
+  }
+
+  /** 重置 wxml 元素的变换矩阵 */
+  resetTransform() {
+    const { context: ctx, scale, container } = this;
+    const { transform } = this.element;
+    if (!transform || transform === 'none') return;
+    ctx.resetTransform();
+    ctx.scale(scale * SYS_DPR, scale * SYS_DPR);
+    ctx.translate(-container.left, -container.top);
+    ctx.save();
+  }
+
   /** 绘制 wxml 元素的背景色 */
   drawBackgroundColor() {
     const { context: ctx, element } = this;

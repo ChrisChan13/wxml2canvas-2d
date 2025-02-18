@@ -41,12 +41,12 @@ npm i wxml2canvas-2d -S --production
 3. 补充各个节点样式；
 ```css
 /* pages/index/index.wxss */
-.box { /* 根节点（容器）的样式 */ }
+.box { /* 根节点（容器）的样式 */ background: white; }
 .title { /* 标题的样式 */ }
 .image { /* 图片的样式 */ }
 .content { /* 内容的样式 */ }
 ```
-4. 依据 wxml 结构以及 css 样式，生成画布内容，并将生成结果导出。
+4. 依据 wxml 结构以及 css 样式，生成画布内容，并将生成结果导出；
 ```javascript
 // pages/index/index.js
 Page({
@@ -60,6 +60,7 @@ Page({
   },
 });
 ```
+5. 更多使用方式以及注意事项参考 [API](#api) 以及 [其他](#其他)；
 
 > **PS**：使用字体时，请注意在**生成画布内容前** [**加载对应的字体文件**](https://developers.weixin.qq.com/miniprogram/dev/api/ui/font/wx.loadFontFace.html)；部分平台如 Windows 可能不支持画布使用自定义字体（小程序基础库 [v3.6.6](https://developers.weixin.qq.com/miniprogram/dev/framework/release/#v3-6-6-2024-11-12) 及以上已修复）；离屏画布模式下，大部分设备均不支持画布使用自定义字体。
 
@@ -244,6 +245,14 @@ Page({
       <td colspan=2>filter</td>
       <td>滤镜效果，部分平台支持：Windows</td>
     </tr>
+    <tr>
+      <td colspan=2>transform</td>
+      <td>二维变换，支持</td>
+    </tr>
+    <tr>
+      <td colspan=2>transform-origin</td>
+      <td>变形原点，支持</td>
+    </tr>
   </table>
 </details>
 <details>
@@ -262,7 +271,7 @@ Page({
   - [ ] 支持多重 `background`，多重 `box-shadow`
     - [x] 支持多重 `background-image`
     - [ ] 支持多重 `box-shadow`
-  - [ ] 支持 `CSS Transforms` 相关属性（*大脑烧烤中...*）
+  - [x] 支持 `CSS Transforms` 相关属性
   - [ ] 支持 `CSS Writing Modes` 相关属性（*大脑烧烤中...*）
   - [x] 支持 `text-indent`、`text-shadow` 等文字样式
   - [x] 支持 `filter` 滤镜效果
