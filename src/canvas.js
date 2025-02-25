@@ -1,6 +1,7 @@
 import {
   DEFAULT_LINE_HEIGHT, FONT_SIZE_OFFSET,
   SYS_DPR, RPX_RATIO, LINE_BREAK_SYMBOL,
+  IS_ANDROID, IS_IOS,
 } from './constants';
 import { drawGradient } from './gradient';
 
@@ -599,7 +600,15 @@ class Canvas {
 
     const fontSize = parseFloat(element['font-size']);
     const isTextCentered = element['text-align'] === 'center';
+    const isTextLeftAlign = element['text-align'] === 'left';
     const isTextRightAlign = element['text-align'] === 'right';
+    /** 文本方向向右 */
+    const isTextRTL = element.direction === 'rtl';
+    if (isTextRTL && !isTextCentered && !isTextLeftAlign) {
+      ctx.textAlign = 'right';
+    }
+    /** 是否文本反向，安卓与 IOS 渲染时文字顺序颠倒 */
+    const shouldReverse = IS_ANDROID || IS_IOS;
 
     /** 文字行高 */
     let lineHeight;
@@ -636,6 +645,7 @@ class Canvas {
     let lines = 0;
     let lastIndex = 0;
     let segment = segments[lastIndex];
+    let lastSegment;
     for (; lines < maxLines; lines += 1) {
       /**
        * 计算最大限制行宽
@@ -646,6 +656,7 @@ class Canvas {
       while (segment && ctx.measureText(lineText + segment.value).width <= lineWidth) {
         const isForcedLineBreak = segment.value === LINE_BREAK_SYMBOL;
         lineText += segment.value;
+        lastSegment = segment;
         lastIndex += 1;
         segment = segments[lastIndex];
         // 判断换行符强制换行
@@ -655,10 +666,10 @@ class Canvas {
       /** 是否内容最后一行 */
       const isLastLine = (lines + 1) === maxLines;
       if (isLastLine && element['text-overflow'] === 'ellipsis') {
-        let ellipsisLineText = `${lineText}...`;
+        let ellipsisLineText = isTextRTL && !shouldReverse ? `...${lineText}` : `${lineText}...`;
         while (ctx.measureText(ellipsisLineText).width > lineWidth) {
           lineText = lineText.slice(0, -1);
-          ellipsisLineText = `${lineText}...`;
+          ellipsisLineText = isTextRTL && !shouldReverse ? `...${lineText}` : `${lineText}...`;
         }
         lineText = ellipsisLineText;
       } else if (isLastLine && segment && segment.value.length === 1) {
@@ -666,16 +677,24 @@ class Canvas {
         if (ctx.measureText(lineText + segment.value).width - lineWidth
           <= ctx.measureText(segment.value).width / 3) {
           lineText += segment.value;
+          lastSegment = segment;
         }
       }
+      if (isTextRTL && !shouldReverse && lastSegment && !lastSegment.isWord) {
+        lineText = lineText.slice(0, -lastSegment.value.length);
+        lineText = `${lastSegment.value}${lineText}`;
+      }
       lineText = lineText.trim();
+      if (isTextRTL && shouldReverse) {
+        lineText = lineText.split('').reverse().join('');
+      }
 
       const lineLeft = (
-        isTextRightAlign ? content.right : content.left
+        (isTextRightAlign || (isTextRTL && !isTextLeftAlign)) ? content.right : content.left
       ) + ( // 首行缩进位置偏移
-        lines === 0 ? textIndent : 0
+        ((isTextRTL && !isTextLeftAlign) ? -1 : 1) * (lines === 0 ? textIndent : 0)
       ) + ( // 文字居中位置偏移
-        isTextCentered ? lineWidth / 2 : 0
+        ((isTextRTL && !isTextLeftAlign) ? -1 : 1) * (isTextCentered ? lineWidth / 2 : 0)
       );
       const lineTop = content.top + lines * lineHeight + (
         lineHeight - fontSize * FONT_SIZE_OFFSET

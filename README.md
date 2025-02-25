@@ -239,6 +239,10 @@ Page({
       <td>文字阴影，支持</td>
     </tr>
     <tr>
+      <td colspan=2>direction</td>
+      <td>文本方向，支持</td>
+    </tr>
+    <tr>
       <td colspan=2>letter-spacing</td>
       <td>字符间距，部分平台支持：Windows</td>
     </tr>

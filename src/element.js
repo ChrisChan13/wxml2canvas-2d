@@ -321,7 +321,7 @@ Element.TEXT_PROPERTIES = [];
 Element.TEXT_COMPUTED_STYLE = [
   'font-family', 'font-size', 'font-weight', 'text-align',
   'line-height', 'text-overflow', 'color', 'text-indent',
-  'text-shadow', 'letter-spacing', 'word-spacing',
+  'text-shadow', 'letter-spacing', 'word-spacing', 'direction',
 ];
 /** 图片节点特殊属性名 */
 Element.IMAGE_PROPERTIES = [
