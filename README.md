@@ -287,6 +287,7 @@ Page({
 
   - 微信新版 Canvas 2D 的画布有宽高分别最大不能超过 4096px 的限制，此 repo 绘制画布时会将画布大小根据设备像素比（dpr）进行放大，使用时请注意避免容器的宽高大于 4096px / dpr
   - 尽管微信新版 Canvas 2D 接口采用同步的方式绘制 Canvas 元素，但在部分机型或平台上调用 wx.canvasToTempFilePath 时，也可能绘制过程尚未完成，所以使用过程中尽可能延迟或分步骤调用 wx.canvasToTempFilePath 进行导出图片的操作
+  - 绘制文字元素时，各机型和各平台对于 font-size、font-weight、line-height 的实际表现与 CSS 中的表现有细微不同，取决于元素的 font-family，建议为文字设置固定的 line-height
   - Image 元素的 src 支持：绝对路径、网络地址、临时路径、本地路径以及 base64 Data URI，暂不支持相对路径，无法根据相对路径定位图片资源地址
   - 组件方法中的 draw 方法，允许传入 page 与 component 两个参数。当未传入 page 时，默认使用 getCurrentPages 中的最后一个页面实例，即当前页面实例。若此组件位于另一组件内，需传入 component 参数，支持仅传入 component 参数，即：draw(page, component) 与 draw(component) 两种传参方式
   - 绘制元素的阴影时，阴影的透明度将随着背景色的透明度等比改变，未设置背景色时，元素的阴影将会不可见，所以绘制元素的阴影时，请尽量设置该元素的背景色为不透明的实色，若无设置，此 repo 在绘制该元素的阴影前会自动设置为纯黑色背景

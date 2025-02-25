@@ -1,11 +1,8 @@
 /** CSS 默认行高 */
 export const DEFAULT_LINE_HEIGHT = 1.4;
-/** 行高位置校准 */
-// CSS 与 画布 的 line-height 存在数值偏差，暂时以常数换算实现近似结果
-export const LINE_HEIGHT_OFFSET = 0.11;
 /** 字体大小位置校准 */
 // CSS 与 画布 的 font-size 存在数值偏差，暂时以常数换算实现近似结果
-export const FONT_SIZE_OFFSET = 0.08;
+export const FONT_SIZE_OFFSET = 0.88;
 /** 换行符 */
 export const LINE_BREAK_SYMBOL = '\n';
 /** 系统信息 */

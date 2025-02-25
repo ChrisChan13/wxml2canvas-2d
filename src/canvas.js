@@ -1,8 +1,98 @@
 import {
-  DEFAULT_LINE_HEIGHT, LINE_HEIGHT_OFFSET, FONT_SIZE_OFFSET,
-  LINE_BREAK_SYMBOL, SYS_DPR, RPX_RATIO,
+  DEFAULT_LINE_HEIGHT, FONT_SIZE_OFFSET,
+  SYS_DPR, RPX_RATIO, LINE_BREAK_SYMBOL,
 } from './constants';
 import { drawGradient } from './gradient';
+
+/**
+ * 拆分文本为单词与符号
+ * @param {String} text 文本内容
+ * @returns {Array} 单词与符号数组
+ */
+const segmentTextIntoWords = (text) => {
+  /** 分隔符号计数 */
+  let delimitersCount = 0;
+  /** 单词计数 */
+  let wordsCount = 0;
+  /** 是否由单词组成 */
+  let isWordBased = false;
+  /** 单词与符号数组 */
+  let segments = [];
+  // 使用内置的 Intl.Segmenter API 进行拆分，安卓设备不支持
+  if (typeof Intl !== 'undefined' && Intl.Segmenter) {
+    const segmenter = new Intl.Segmenter(undefined, { granularity: 'word' });
+    segments = Array.from(segmenter.segment(text)).map((item) => {
+      if (!item.isWordLike) delimitersCount += 1;
+      else wordsCount += 1;
+      return {
+        value: item.segment,
+        isWord: item.isWordLike,
+      };
+    });
+  } else {
+    /** 分隔符号匹配 */
+    const delimiters = text.matchAll(/[,.!?; ]/g);
+    let delimiter = delimiters.next();
+    /** 连续分隔符号计数 */
+    let consecutiveNonWord = 0;
+    let lastIndex = 0;
+    while (!delimiter.done) {
+      const word = text.slice(lastIndex, delimiter.value.index);
+      if (word) {
+        // 单独处理换行符，不记入分隔符号
+        if (new RegExp(`${LINE_BREAK_SYMBOL}`).test(word)) {
+          // eslint-disable-next-line no-loop-func
+          word.split(LINE_BREAK_SYMBOL).map((item) => {
+            segments.push({
+              value: item,
+              isWord: true,
+            }, {
+              value: LINE_BREAK_SYMBOL,
+              isWord: false,
+            });
+            wordsCount += 1;
+            return item;
+          });
+          segments.splice(-1, 1);
+        } else {
+          segments.push({
+            value: word,
+            isWord: true,
+          });
+          wordsCount += 1;
+        }
+        consecutiveNonWord = 0;
+      }
+      segments.push({
+        value: delimiter.value[0],
+        isWord: false,
+      });
+      // 连续的分隔符号只计一次
+      if (consecutiveNonWord === 0) {
+        delimitersCount += 1;
+      }
+      consecutiveNonWord += 1;
+      lastIndex = delimiter.value.index + delimiter.value[0].length;
+      delimiter = delimiters.next();
+    }
+    if (lastIndex < text.length) {
+      segments.push({
+        value: text.slice(lastIndex),
+        isWord: true,
+      });
+      wordsCount += 1;
+    }
+  }
+  // 判断是否由单词组成，暂取包含三分之一及以上的分隔符号作为判断依据
+  isWordBased = delimitersCount / (wordsCount + delimitersCount) > 0.3;
+  if (!isWordBased) {
+    segments = text.split('').map((item) => ({
+      value: item,
+      isWord: true,
+    }));
+  }
+  return segments;
+};
 
 /**
  * 获取画布对象
@@ -509,7 +599,7 @@ class Canvas {
 
     const fontSize = parseFloat(element['font-size']);
     const isTextCentered = element['text-align'] === 'center';
-    const isTextRightward = element['text-align'] === 'right';
+    const isTextRightAlign = element['text-align'] === 'right';
 
     /** 文字行高 */
     let lineHeight;
@@ -530,77 +620,74 @@ class Canvas {
       textIndent = (parseFloat(element['text-indent']) / 100) * content.width;
     }
 
-    /** 单行内容，逐行显示 */
-    let lineText = '';
-    /** 内容总行数 */
-    let lines = 0;
-    /** 计算元素内实际显示最大行数 */
-    // 向上取整避免行高过大，文字错位
-    const maxLines = Math.ceil(content.height / lineHeight);
+    /**
+     * 计算元素内实际显示最大行数
+     *
+     * 向上取整避免行高过大，文字错位
+     */
+    const maxLines = Math.max(Math.round(content.height / lineHeight), 1);
     // 消除行高计算偏差
     lineHeight = content.height / maxLines;
-    /** 文字行宽 */
-    let lineWidth;
+    /** 单行内容，逐行显示 */
+    let lineText = '';
+    /** 内容基本单位拆分 */
+    const segments = segmentTextIntoWords(element.dataset.text);
 
-    // 单行文字避免字体表现差异
-    if (maxLines === 1 && element.overflow !== 'hidden') {
-      // 向上取整避免宽度偏小，文字变形
-      lineWidth = Math.ceil(content.width - textIndent);
-      lineText = element.dataset.text;
-    } else {
-      // eslint-disable-next-line no-restricted-syntax
-      for (const char of `${element.dataset.text}`) {
+    let lines = 0;
+    let lastIndex = 0;
+    let segment = segments[lastIndex];
+    for (; lines < maxLines; lines += 1) {
+      /**
+       * 计算最大限制行宽
+       *
+       * 判断首行缩进，取整避免行宽过小，导致文字变形
+       */
+      const lineWidth = Math.ceil(content.width - (lines === 0 ? textIndent : 0));
+      while (segment && ctx.measureText(lineText + segment.value).width <= lineWidth) {
+        const isForcedLineBreak = segment.value === LINE_BREAK_SYMBOL;
+        lineText += segment.value;
+        lastIndex += 1;
+        segment = segments[lastIndex];
         // 判断换行符强制换行
-        const isForcedLineBreak = char === LINE_BREAK_SYMBOL;
-        // 判断是否首行缩进
-        lineWidth = Math.ceil(content.width - (lines === 0 ? textIndent : 0));
-        // 判断是否需要换行
-        if (isForcedLineBreak
-          || ctx.measureText(lineText + char).width > lineWidth
-        ) {
-          const isTextOverflow = (lines + 1) === maxLines;
-          // 判断是否多余文字使用 ... 展示
-          if (isTextOverflow && element['text-overflow'] === 'ellipsis') {
-            while (ctx.measureText(`${lineText}...`).width > lineWidth) {
-              lineText = lineText.slice(0, -1);
-            }
-            lineText = `${lineText}...`;
-          }
-          ctx.fillText(
-            lineText,
-            isTextRightward ? content.right : content.left + (
-              lines === 0 ? textIndent : 0
-            ) + (isTextCentered ? lineWidth / 2 : 0),
-            content.top + fontSize * FONT_SIZE_OFFSET + (
-              fontSize === lineHeight ? 0 : lineHeight * LINE_HEIGHT_OFFSET
-            ) + lines * lineHeight,
-            lineWidth,
-          );
-          if (isTextOverflow) {
-            lineText = '';
-            break;
-          } else {
-            lineText = isForcedLineBreak ? '' : char;
-            lines += 1;
-          }
-        } else {
-          lineText += char;
+        if (isForcedLineBreak) break;
+      }
+
+      /** 是否内容最后一行 */
+      const isLastLine = (lines + 1) === maxLines;
+      if (isLastLine && element['text-overflow'] === 'ellipsis') {
+        let ellipsisLineText = `${lineText}...`;
+        while (ctx.measureText(ellipsisLineText).width > lineWidth) {
+          lineText = lineText.slice(0, -1);
+          ellipsisLineText = `${lineText}...`;
+        }
+        lineText = ellipsisLineText;
+      } else if (isLastLine && segment && segment.value.length === 1) {
+        // 处理部分因计算偏差导致文字溢出的情况
+        if (ctx.measureText(lineText + segment.value).width - lineWidth
+          <= ctx.measureText(segment.value).width / 3) {
+          lineText += segment.value;
         }
       }
-    }
+      lineText = lineText.trim();
 
-    // 若不超出最高行数范围，绘制剩余文字
-    if ((lines + 1) <= maxLines && lineText) {
+      const lineLeft = (
+        isTextRightAlign ? content.right : content.left
+      ) + ( // 首行缩进位置偏移
+        lines === 0 ? textIndent : 0
+      ) + ( // 文字居中位置偏移
+        isTextCentered ? lineWidth / 2 : 0
+      );
+      const lineTop = content.top + lines * lineHeight + (
+        lineHeight - fontSize * FONT_SIZE_OFFSET
+      ) / 2;
       ctx.fillText(
         lineText,
-        isTextRightward ? content.right : content.left + (
-          lines === 0 ? textIndent : 0
-        ) + (isTextCentered ? lineWidth / 2 : 0),
-        content.top + fontSize * FONT_SIZE_OFFSET + (
-          fontSize === lineHeight ? 0 : lineHeight * LINE_HEIGHT_OFFSET
-        ) + lines * lineHeight,
+        lineLeft,
+        lineTop,
         lineWidth,
       );
+
+      lineText = '';
     }
     this.restoreContext();
   }
