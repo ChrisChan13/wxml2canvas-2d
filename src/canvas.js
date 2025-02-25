@@ -270,9 +270,12 @@ class Canvas {
     originX = parseFloat(originX);
     originY = parseFloat(originY);
     const [m11, m12, m21, m22, m41, m42] = transform.slice(7).slice(0, -1).split(', ');
-    ctx.translate(container.left + originX, container.top + originY);
+    // 变换中心点偏移
+    const offsetX = container.left + originX;
+    const offsetY = container.top + originY;
+    ctx.translate(offsetX, offsetY);
     ctx.transform(m11, m12, m21, m22, m41, m42);
-    ctx.translate(-container.left - originX, -container.top - originY);
+    ctx.translate(-offsetX, -offsetY);
     ctx.save();
   }
 
