@@ -673,6 +673,15 @@ class Canvas {
   toDataURL() {
     return this.canvas.toDataURL();
   }
+
+  /**
+   * 获取画布的像素数据
+   */
+  getImageData() {
+    return this.context.getImageData(
+      0, 0, this.canvas.width, this.canvas.height,
+    );
+  }
 }
 
 export default Canvas;

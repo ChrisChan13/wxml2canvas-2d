@@ -122,6 +122,11 @@ Page({
     <td>导出画布至 Data URI</td>
     <td colspan=4>-</td>
   </tr>
+  <tr>
+    <td>getImageData</td>
+    <td>提取画布的像素数据</td>
+    <td colspan=4>-</td>
+  </tr>
 </table>
 
 > **PS**：iOS、Mac 与 Windows 平台在**离屏画布模式**（offscreen 为 true）下使用 `wx.canvasToTempFilePath` 导出时会[报错](https://developers.weixin.qq.com/community/search?query=fail%2520invalid%2520viewId)（小程序基础库 [v3.7.1](https://developers.weixin.qq.com/miniprogram/dev/framework/release/#v3-7-1-2024-11-26) 及以上已修复），可以使用 `Canvas.toDataURL` 搭配 `FileSystemManager.saveFile` 保存导出的图片

@@ -131,5 +131,12 @@ Component({
     toDataURL() {
       return this.canvas.toDataURL();
     },
+    /**
+     * 获取画布的像素数据
+     * @returns {ImageData} imageData
+     */
+    getImageData() {
+      return this.canvas.getImageData();
+    },
   },
 });
