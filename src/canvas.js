@@ -45,6 +45,7 @@ const segmentTextIntoWords = (text) => {
       };
     });
   } else {
+    if (typeof text !== 'string') text = text.toString();
     /** 分隔符号匹配 */
     const delimiters = text.matchAll(/[,.!?; ]/g);
     let delimiter = delimiters.next();
