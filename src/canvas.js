@@ -20,6 +20,21 @@ const segmentText = (text) => {
 };
 
 /**
+ * 获取单词长度中位数
+ * @param {Array} segments 单词数组
+ * @return {Number} 单词长度中位数
+ */
+const getSegmentLengthMedian = (segments) => {
+  const words = segments.filter((segment) => segment.isWord);
+  const size = words.length;
+  const lengths = words.map((segment) => segment.value.length).sort((a, b) => a - b);
+  if (size % 2 === 1) {
+    return lengths[Math.floor(size / 2)];
+  }
+  return (lengths[size / 2 - 1] + lengths[size / 2]) / 2;
+};
+
+/**
  * 拆分文本为单词与符号
  * @param {String} text 文本内容
  * @returns {Array} 单词与符号数组
@@ -99,8 +114,15 @@ const segmentTextIntoWords = (text) => {
       wordsCount += 1;
     }
   }
-  // 判断是否由单词组成，暂取包含三分之一及以上的分隔符号作为判断依据
-  isWordBased = delimitersCount / (wordsCount + delimitersCount) > 0.3;
+  /**
+   * 判断是否由单词组成
+   *
+   * 1. 单词数量超过 1 个
+   * 2. 单词长度中位数不超过 13
+   * 3. 分隔符号占比超过 30%
+   */
+  isWordBased = wordsCount > 1 && getSegmentLengthMedian(segments) <= 13
+    && delimitersCount / (wordsCount + delimitersCount) > 0.3;
   if (!isWordBased) {
     segments = segmentText(text).map((item) => ({
       value: item,
@@ -649,7 +671,7 @@ class Canvas {
      *
      * 向上取整避免行高过大，文字错位
      */
-    const maxLines = Math.max(Math.round(content.height / lineHeight), 1);
+    const maxLines = Math.max(Math.ceil(content.height / lineHeight), 1);
     // 消除行高计算偏差
     lineHeight = content.height / maxLines;
     /** 单行内容，逐行显示 */
