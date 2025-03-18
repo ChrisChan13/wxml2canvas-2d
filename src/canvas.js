@@ -6,6 +6,20 @@ import {
 import { drawGradient } from './gradient';
 
 /**
+ * 拆分文本
+ * @param {String} text 文本内容
+ * @returns {Array} 文本字符
+ */
+const segmentText = (text) => {
+  // 使用内置的 Intl.Segmenter API 进行拆分，安卓设备不支持
+  if (typeof Intl !== 'undefined' && Intl.Segmenter) {
+    const segmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
+    return Array.from(segmenter.segment(text)).map((item) => item.segment);
+  }
+  return Array.from(text);
+};
+
+/**
  * 拆分文本为单词与符号
  * @param {String} text 文本内容
  * @returns {Array} 单词与符号数组
@@ -87,7 +101,7 @@ const segmentTextIntoWords = (text) => {
   // 判断是否由单词组成，暂取包含三分之一及以上的分隔符号作为判断依据
   isWordBased = delimitersCount / (wordsCount + delimitersCount) > 0.3;
   if (!isWordBased) {
-    segments = text.split('').map((item) => ({
+    segments = segmentText(text).map((item) => ({
       value: item,
       isWord: true,
     }));
@@ -686,7 +700,7 @@ class Canvas {
       }
       lineText = lineText.trim();
       if (isTextRTL && shouldReverse) {
-        lineText = lineText.split('').reverse().join('');
+        lineText = segmentText(lineText).reverse().join('');
       }
 
       const lineLeft = (
