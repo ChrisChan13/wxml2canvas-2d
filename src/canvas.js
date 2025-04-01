@@ -702,7 +702,7 @@ class Canvas {
 
       /** 是否内容最后一行 */
       const isLastLine = (lines + 1) === maxLines;
-      if (isLastLine && element['text-overflow'] === 'ellipsis') {
+      if (isLastLine && lastIndex < segments.length - 1 && element['text-overflow'] === 'ellipsis') {
         let ellipsisLineText = isTextRTL && !shouldReverse ? `...${lineText}` : `${lineText}...`;
         while (ctx.measureText(ellipsisLineText).width > lineWidth) {
           lineText = lineText.slice(0, -1);
