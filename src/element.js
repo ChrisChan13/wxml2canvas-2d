@@ -342,6 +342,7 @@ Element.getNodesRef = (selector, fields, page, component) => new Promise((resolv
   const query = page.createSelectorQuery();
   if (component) { query.in(component); }
   const nodesRef = [];
+  const computedRects = [];
   const refs = query.selectAll(selector);
   refs.fields(fields, (res) => {
     nodesRef.push(...res);
@@ -349,14 +350,15 @@ Element.getNodesRef = (selector, fields, page, component) => new Promise((resolv
   refs.fields({
     computedStyle: Element.CONSTANT_COMPUTED_STYLE,
   }, (res) => {
-    res.map((item, index) => {
+    computedRects.push(...res);
+  });
+  query.exec(() => {
+    computedRects.map((item, index) => {
       Object.assign(nodesRef[index], {
         __computedRect: getComputedRect(item),
       });
       return item;
     });
-  });
-  query.exec(() => {
     resolve(nodesRef);
   });
 });
