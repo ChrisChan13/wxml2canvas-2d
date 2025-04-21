@@ -28,3 +28,9 @@ export const TRI2RAD_RATIO = Math.PI / 180;
 /** 椭圆形径向渐变的长短轴比例 */
 // 暂未找到 CSS 中椭圆形径向渐变的长短轴生成规律，以常数代替实现近似结果
 export const SIDE2CORNER_RATIO = 1.4141;
+/** 视频海报的裁剪、缩放模式 */
+export const VIDEO_POSTER_MODES = {
+  contain: 'aspectFit',
+  cover: 'aspectFill',
+  fill: 'scaleToFill',
+};

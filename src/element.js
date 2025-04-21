@@ -329,6 +329,12 @@ Element.IMAGE_PROPERTIES = [
 ];
 /** 图片节点特殊样式名 */
 Element.IMAGE_COMPUTED_STYLE = [];
+/** 视频节点特殊属性名 */
+Element.VIDEO_PROPERTIES = [
+  'src', 'object-fit', 'poster',
+];
+/** 视频节点特殊样式名 */
+Element.VIDEO_COMPUTED_STYLE = [];
 
 /**
  * 获取 WXML 节点信息对象

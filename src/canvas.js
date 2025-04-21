@@ -1,7 +1,7 @@
 import {
   DEFAULT_LINE_HEIGHT, FONT_SIZE_OFFSET,
   SYS_DPR, RPX_RATIO, LINE_BREAK_SYMBOL,
-  IS_ANDROID, IS_IOS,
+  IS_ANDROID, IS_IOS, VIDEO_POSTER_MODES,
 } from './constants';
 import { drawGradient } from './gradient';
 
@@ -219,6 +219,24 @@ const drawImageRepeated = (
 };
 
 /**
+ * 获取等边三角形顶点坐标
+ * @param {Number} x 中心点 x 轴坐标
+ * @param {Number} y 中心点 y 轴坐标
+ * @param {Number} l 等边三角形边长
+ * @returns {Array} 顶点坐标数组
+ */
+const getEquilateralTriangle = (x, y, l) => {
+  const area = (Math.sqrt(3) / 4) * l ** 2;
+  const halfLength = l / 2;
+  const centerToSide = ((area / 6) * 2) / halfLength;
+  const centerToCorner = (area * 2) / l - centerToSide;
+  const a = [x - centerToSide, y - halfLength];
+  const b = [x + centerToCorner, y];
+  const c = [x - centerToSide, y + halfLength];
+  return [a, b, c];
+};
+
+/**
  * 画布工具类
  *
  * 1.实例化：传入组件实例以及画布选择器
@@ -418,8 +436,11 @@ class Canvas {
     ctx.save();
   }
 
-  /** 绘制 wxml 元素的背景色 */
-  drawBackgroundColor() {
+  /**
+   * 绘制 wxml 元素的背景色
+   * @param {String} color 背景色
+   */
+  drawBackgroundColor(color) {
     const { context: ctx, element } = this;
     const clips = element['background-clip'].split(', ');
     const colorClip = clips[clips.length - 1].slice(0, -4);
@@ -430,7 +451,7 @@ class Canvas {
     } else {
       this.setElementBoundary();
     }
-    ctx.fillStyle = element['background-color'];
+    ctx.fillStyle = color ?? element['background-color'];
     ctx.fillRect(element.left, element.top, element.width, element.height);
 
     const gradientClip = clips[0].slice(0, -4);
@@ -546,12 +567,16 @@ class Canvas {
     this.restoreContext();
   }
 
-  /** 绘制 wxml 的 image 元素 */
-  async drawImage() {
+  /**
+   * 绘制 wxml 的 image 元素
+   * @param {String} src 图片链接
+   * @param {String} mode 图片裁剪、缩放的模式
+   */
+  async drawImage(src, mode) {
     const { element } = this;
     this.restoreContext();
     this.setElementBoundary();
-    const image = await this.createImage(element.src);
+    const image = await this.createImage(src ?? element.src);
     let dx;
     let dy;
     let dWidth;
@@ -561,7 +586,7 @@ class Canvas {
     let sWidth;
     let sHeight;
     const content = element.getBoxSize('content');
-    if (element.mode === 'aspectFit') {
+    if ((mode ?? element.mode) === 'aspectFit') {
       sx = 0;
       sy = 0;
       sWidth = image.width;
@@ -578,7 +603,7 @@ class Canvas {
         dx = content.left + (content.width - dWidth) / 2;
         dy = content.top;
       }
-    } else if (element.mode === 'aspectFill') {
+    } else if ((mode ?? element.mode) === 'aspectFill') {
       dx = content.left;
       dy = content.top;
       dWidth = content.width;
@@ -606,6 +631,47 @@ class Canvas {
       dHeight = content.height;
     }
     this.context.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+    this.restoreContext();
+  }
+
+  /** 绘制 wxml 的 image 元素 */
+  async drawVideo() {
+    const { context: ctx, element } = this;
+    this.drawBackgroundColor('#000000');
+    if (element.poster) {
+      await this.drawImage(element.poster, VIDEO_POSTER_MODES[element.objectFit]);
+    }
+    this.restoreContext();
+    this.setElementBoundary();
+    /** 播放按钮边长 */
+    const LENGTH = 50;
+    /** 播放按钮顶点坐标 */
+    const vertexes = getEquilateralTriangle(
+      element.left + element.width / 2, element.top + element.height / 2, LENGTH,
+    );
+    /** 播放按钮圆角数据 */
+    const RADIUS = [0, 0, 8];
+    RADIUS[0] = RADIUS[2] / 2;
+    RADIUS[1] = Math.sqrt(3) * RADIUS[0];
+    ctx.beginPath();
+    ctx.moveTo(vertexes[0][0], vertexes[0][1] + RADIUS[2]);
+    ctx.quadraticCurveTo(
+      vertexes[0][0], vertexes[0][1],
+      vertexes[0][0] + RADIUS[1], vertexes[0][1] + RADIUS[0],
+    );
+    ctx.lineTo(vertexes[1][0] - RADIUS[1], vertexes[1][1] - RADIUS[0]);
+    ctx.quadraticCurveTo(
+      vertexes[1][0], vertexes[1][1],
+      vertexes[1][0] - RADIUS[1], vertexes[1][1] + RADIUS[0],
+    );
+    ctx.lineTo(vertexes[2][0] + RADIUS[1], vertexes[2][1] - RADIUS[0]);
+    ctx.quadraticCurveTo(
+      vertexes[2][0], vertexes[2][1],
+      vertexes[2][0], vertexes[2][1] - RADIUS[2],
+    );
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+    ctx.fill();
     this.restoreContext();
   }
 

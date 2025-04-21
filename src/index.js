@@ -15,7 +15,11 @@ const drawElement = async (canvas, element) => {
   canvas.drawBackgroundColor();
   await canvas.drawBackgroundImage();
   if (element.src) {
-    await canvas.drawImage();
+    if (element.objectFit) {
+      await canvas.drawVideo();
+    } else {
+      await canvas.drawImage();
+    }
   } else if (element.dataset.text) {
     canvas.drawText();
   }
@@ -86,11 +90,13 @@ Component({
           ...Element.COMMON_PROPERTIES,
           ...Element.TEXT_PROPERTIES,
           ...Element.IMAGE_PROPERTIES,
+          ...Element.VIDEO_PROPERTIES,
         ],
         computedStyle: [
           ...Element.COMMON_COMPUTED_STYLE,
           ...Element.TEXT_COMPUTED_STYLE,
           ...Element.IMAGE_COMPUTED_STYLE,
+          ...Element.VIDEO_COMPUTED_STYLE,
         ],
       };
       const [container] = await Element.getNodesRef(`.${containerClass}`, fields, page, component);
