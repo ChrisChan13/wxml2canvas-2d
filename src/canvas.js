@@ -634,7 +634,7 @@ class Canvas {
     this.restoreContext();
   }
 
-  /** 绘制 wxml 的 image 元素 */
+  /** 绘制 wxml 的 video 元素 */
   async drawVideo() {
     const { context: ctx, element } = this;
     this.drawBackgroundColor('#000000');

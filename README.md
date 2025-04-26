@@ -284,6 +284,7 @@ Page({
   - [ ] 支持 `CSS Writing Modes` 相关属性（*大脑烧烤中...*）
   - [x] 支持 `text-indent`、`text-shadow` 等文字样式
   - [x] 支持 `filter` 滤镜效果
+  - [x] 支持 `video` 标签
 </details>
 <details>
   <summary><b>使用注意</b></summary>
