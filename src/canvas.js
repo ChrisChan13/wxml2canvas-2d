@@ -775,7 +775,7 @@ class Canvas {
           ellipsisLineText = isTextRTL && !shouldReverse ? `...${lineText}` : `${lineText}...`;
         }
         lineText = ellipsisLineText;
-      } else if (isLastLine && segment && segment.value.length === 1) {
+      } else if (isLastLine && segment) {
         // 处理部分因计算偏差导致文字溢出的情况
         if (ctx.measureText(lineText + segment.value).width - lineWidth
           <= ctx.measureText(segment.value).width / 3) {
