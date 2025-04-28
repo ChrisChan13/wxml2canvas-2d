@@ -1,3 +1,5 @@
+import { POSITIONS } from './constants';
+
 /**
  * 获取部分指定字段（与布局位置字段重名）
  * @param {Object} nodesRef WXML 节点信息对象
@@ -34,12 +36,32 @@ class Element {
   }
 
   /**
+   * 获取 wxml 元素的顶点坐标：左上、右上、右下、左下
+   * @param {String} sizing 盒子模型描述
+   * @return {Array} 顶点坐标
+   */
+  getVertex(sizing = 'border') {
+    const key = `__${sizing}Vertex`;
+    if (this[key]) return this[key];
+    const content = this.getBoxSize(sizing);
+    const leftTop = [content.left, content.top];
+    const rightTop = [content.left + content.width, content.top];
+    const leftBottom = [content.left, content.top + content.height];
+    const rightBottom = [content.left + content.width, content.top + content.height];
+    /** 顶点坐标：左上、右上、右下、左下 */
+    const vertex = [leftTop, rightTop, rightBottom, leftBottom];
+    Object.assign(this, { [key]: vertex });
+    return vertex;
+  }
+
+  /**
    * 获取 wxml 元素的内容盒子大小数据
    * @param {String} sizing 盒子模型描述
    * @returns {Object} 盒子大小数据
    */
   getBoxSize(sizing = 'border') {
-    if (this[`__${sizing}Box`]) return this[`__${sizing}Box`];
+    const key = `__${sizing}Box`;
+    if (this[key]) return this[key];
 
     let offsetLeft = this.left;
     let offsetTop = this.top;
@@ -48,34 +70,33 @@ class Element {
     let offsetWidth = this.width;
     let offsetHeight = this.height;
 
-    const padLeft = parseFloat(this['padding-left']);
-    const padTop = parseFloat(this['padding-top']);
-    const padRight = parseFloat(this['padding-right']);
-    const padBottom = parseFloat(this['padding-bottom']);
-    const { width: borderWidth } = this.getBorder();
-
     switch (sizing) {
-      case 'content':
+      case 'content': {
+        const padLeft = parseFloat(this['padding-left']);
+        const padTop = parseFloat(this['padding-top']);
+        const padRight = parseFloat(this['padding-right']);
+        const padBottom = parseFloat(this['padding-bottom']);
         offsetLeft += padLeft;
         offsetTop += padTop;
         offsetRight -= padRight;
         offsetBottom -= padBottom;
         offsetWidth -= (padLeft + padRight);
         offsetHeight -= (padTop + padBottom);
-      case 'padding':
-        if (borderWidth > 0) {
-          offsetLeft += borderWidth;
-          offsetTop += borderWidth;
-          offsetRight -= borderWidth;
-          offsetBottom -= borderWidth;
-          offsetWidth -= 2 * borderWidth;
-          offsetHeight -= 2 * borderWidth;
-        }
+      }
+      case 'padding': {
+        const border = this.getBorder();
+        offsetLeft += border.left.width;
+        offsetTop += border.top.width;
+        offsetRight -= border.right.width;
+        offsetBottom -= border.bottom.width;
+        offsetWidth -= border.left.width + border.right.width;
+        offsetHeight -= border.top.width + border.bottom.width;
         break;
+      }
       default:
     }
     Object.assign(this, {
-      [`__${sizing}Box`]: {
+      [key]: {
         left: offsetLeft,
         top: offsetTop,
         right: offsetRight,
@@ -84,7 +105,7 @@ class Element {
         height: offsetHeight,
       },
     });
-    return this[`__${sizing}Box`];
+    return this[key];
   }
 
   /**
@@ -96,6 +117,7 @@ class Element {
     let borderWidth = 0;
     let borderStyle = '';
     let borderColor = '';
+    Object.assign(this, { __border: {} });
     if (this.border) {
       [borderWidth, borderStyle, ...borderColor] = this.border.split(' ');
       if (borderStyle === 'none') {
@@ -104,13 +126,28 @@ class Element {
         borderWidth = parseFloat(borderWidth);
       }
       borderColor = borderColor.join(' ');
-    }
-    Object.assign(this, {
-      __border: {
+      Object.assign(this.__border, {
         width: borderWidth,
         style: borderStyle,
         color: borderColor,
-      },
+      });
+    }
+    POSITIONS.map((key) => {
+      [borderWidth, borderStyle, ...borderColor] = this[`border-${key}`].split(' ');
+      if (borderStyle === 'none') {
+        borderWidth = 0;
+      } else {
+        borderWidth = parseFloat(borderWidth);
+      }
+      borderColor = borderColor.join(' ');
+      Object.assign(this.__border, {
+        [`${key}`]: {
+          width: borderWidth,
+          style: borderStyle,
+          color: borderColor,
+        },
+      });
+      return key;
     });
     return this.__border;
   }
@@ -314,6 +351,7 @@ Element.COMMON_COMPUTED_STYLE = [
   'border-top-left-radius', 'border-top-right-radius',
   'border-bottom-right-radius', 'border-bottom-left-radius',
   'overflow', 'filter', 'transform', 'transform-origin',
+  'border-top', 'border-right', 'border-bottom', 'border-left',
 ];
 /** 文字节点特殊属性名 */
 Element.TEXT_PROPERTIES = [];

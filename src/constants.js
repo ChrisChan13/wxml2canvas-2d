@@ -34,3 +34,7 @@ export const VIDEO_POSTER_MODES = {
   cover: 'aspectFill',
   fill: 'scaleToFill',
 };
+/** 位置列表 */
+export const POSITIONS = ['left', 'top', 'right', 'bottom'];
+/** 双实线宽度与单实线宽度比例 */
+export const DOUBLE_LINE_RATIO = 2 / 7;

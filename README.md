@@ -180,11 +180,11 @@ Page({
     <tr>
       <td rowspan="3">border</td>
       <td>border-width</td>
-      <td>边框宽度，暂仅支持四边同宽</td>
+      <td>边框宽度，支持</td>
     </tr>
     <tr>
       <td>border-style</td>
-      <td>边框样式，暂仅支持 solid 和 dashed</td>
+      <td>边框样式，暂仅支持 solid、dashed 和 double</td>
     </tr>
     <tr>
       <td>border-color</td>

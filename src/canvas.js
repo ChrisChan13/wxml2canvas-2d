@@ -2,6 +2,7 @@ import {
   DEFAULT_LINE_HEIGHT, FONT_SIZE_OFFSET,
   SYS_DPR, RPX_RATIO, LINE_BREAK_SYMBOL,
   IS_ANDROID, IS_IOS, VIDEO_POSTER_MODES,
+  POSITIONS, DOUBLE_LINE_RATIO,
 } from './constants';
 import { drawGradient } from './gradient';
 
@@ -391,12 +392,34 @@ class Canvas {
     ctx.closePath();
   }
 
-  /** 设置 wxml 元素的边界
+  /**
+   * 设置 wxml 元素的边界
    * @param {String} sizing 盒子模型描述
    */
   setElementBoundary(sizing = 'border') {
     this.clipElementPath(sizing);
     this.context.clip();
+  }
+
+  /**
+   * 设置 wxml 元素的边框边界
+   * @param {String} borderSide 边框位置
+   * @param {String} outerSizing 外框盒子模型描述
+   * @param {String} innerSizing 内框盒子模型描述
+   */
+  setBorderBoundary(borderSide, outerSizing = 'border', innerSizing = 'padding') {
+    const { context: ctx, element } = this;
+    const outerVertex = element.getVertex(outerSizing);
+    const innerVertex = element.getVertex(innerSizing);
+    ctx.beginPath();
+    const start = POSITIONS.indexOf(borderSide);
+    const end = start === 0 ? POSITIONS.length - 1 : start - 1;
+    ctx.moveTo(...outerVertex[start]);
+    ctx.lineTo(...innerVertex[start]);
+    ctx.lineTo(...innerVertex[end]);
+    ctx.lineTo(...outerVertex[end]);
+    ctx.closePath();
+    ctx.clip();
   }
 
   /** 设置 wxml 元素的变换矩阵 */
@@ -818,18 +841,63 @@ class Canvas {
   drawBorder() {
     const { context: ctx, element } = this;
     const border = element.getBorder();
-    if (border.width === 0) return;
-    this.restoreContext();
-    this.setElementBoundary();
-    ctx.strokeStyle = border.color;
-    ctx.lineWidth = border.width * 2;
-    if (border.style === 'dashed') {
-      ctx.lineDashOffset = -border.width * 2;
-      ctx.setLineDash([2 * border.width, border.width]);
+    if (border.width > 0) {
+      this.restoreContext();
+      this.setElementBoundary();
+      ctx.strokeStyle = border.color;
+      ctx.lineWidth = border.width * 2;
+      if (border.style === 'dashed') {
+        ctx.lineDashOffset = -border.width * 2;
+        ctx.setLineDash([2 * border.width, border.width]);
+      }
+      this.clipElementPath();
+      ctx.stroke();
+      this.restoreContext();
+    } else {
+      const vertex = element.getVertex();
+      POSITIONS.map((key, index) => {
+        if (border[key].width === 0) return key;
+        this.restoreContext();
+        this.setBorderBoundary(key);
+        ctx.strokeStyle = border[key].color;
+        if (border[key].style === 'double') {
+          ctx.lineWidth = border[key].width * DOUBLE_LINE_RATIO * 2;
+          const innerVertex = element.getVertex('padding');
+          const point = [];
+          // 双实线边框的宽高，加长避免露出矩形其他边
+          const width = ['left', 'right'].indexOf(key) > -1 ? border[key].width : (element.width + 2 * ctx.lineWidth);
+          const height = ['top', 'bottom'].indexOf(key) > -1 ? border[key].width : (element.height + 2 * ctx.lineWidth);
+          if (key === 'right') {
+            point.push(innerVertex[1][0], vertex[1][1] - ctx.lineWidth);
+          } else if (key === 'bottom') {
+            point.push(vertex[3][0] - ctx.lineWidth, innerVertex[3][1]);
+          } else {
+            point.push(
+              vertex[0][0] - (key === 'top' ? ctx.lineWidth : 0),
+              vertex[0][1] - (key === 'left' ? ctx.lineWidth : 0),
+            );
+          }
+          ctx.beginPath();
+          ctx.rect(...point, width, height);
+          ctx.closePath();
+          ctx.stroke();
+        } else {
+          ctx.lineWidth = border[key].width * 2;
+          if (border[key].style === 'dashed') {
+            ctx.lineDashOffset = -border[key].width * 2;
+            ctx.setLineDash([2 * border[key].width, 2 * border[key].width]);
+          }
+          const line = [vertex[index], vertex[index === 0 ? POSITIONS.length - 1 : index - 1]];
+          ctx.beginPath();
+          ctx.moveTo(...line[0]);
+          ctx.lineTo(...line[1]);
+          ctx.closePath();
+          ctx.stroke();
+        }
+        this.restoreContext();
+        return key;
+      });
     }
-    this.clipElementPath();
-    ctx.stroke();
-    this.restoreContext();
   }
 
   /** 绘制 wxml 元素阴影 */
