@@ -313,6 +313,86 @@ Page({
   - 微信新版 Canvas API 目前不支持绘制椭圆形径向渐变图案，此 repo 使用 CanvasContext.scale 对圆形径向渐变图案进行放大或缩小，以实现椭圆形径向渐变图案，而在 closest-corner 与 farthest-corner 模式下的椭圆形径向渐变中，目前还未找出 CSS 在绘制椭圆形径向渐变图案时的长轴与短轴的大小的计算规则，暂时使用常量比例进行换算对齐，未彻底解决
   - 锥形渐变图案目前仅微信开发者工具以及 Windows 平台支持，开发工具上锥形渐变角度的 0° 基准与 CSS 表现一致（即 12 点钟方向），起始角度参数的角度单位为弧度，Windows 平台上的 0° 基准为 3 点钟方向，起始角度参数的角度单位为角度，iOS 和 Android 均不支持 CanvasContext.createConicGradient API，macOS 平台未知
 </details>
+<details>
+  <summary><b>更新日志</b></summary>
+  <br>
+
+  - **v1.3.0 (2025-04-28)**
+  1. `A` 新增 支持绘制样式 border-left、border-right、border-top、border-bottom
+  2. `A` 新增 支持绘制样式 border-style (double)
+  - **v1.2.5 (2025-04-26)**
+  1. `U` 更新 兼容部分设备字体表现差异
+  - **v1.2.4 (2025-04-21)**
+  1. `U` 更新 优化绘制流程
+  2. `A` 新增 支持绘制元素 video [详情](https://github.com/ChrisChan13/wxml2canvas-2d/issues/20)
+  - **v1.2.3 (2025-04-01)**
+  1. `F` 修复 text-overflow 表现错误 [详情](https://github.com/ChrisChan13/wxml2canvas-2d/issues/17)
+  - **v1.2.2 (2025-03-18)**
+  1. `U` 更新 优化文字绘制流程
+  2. `F` 修复 Number 类型文字绘制报错 [详情](https://github.com/ChrisChan13/wxml2canvas-2d/issues/14)
+  - **v1.2.1 (2025-02-25)**
+  1. `A` 新增 支持导出 ImageData (像素点数据)
+  2. `U` 更新 优化文字绘制流程
+  3. `A` 新增 支持绘制样式 direction [详情](https://github.com/ChrisChan13/wxml2canvas-2d/issues/13)
+  - **v1.2.0 (2025-02-18)**
+  1. `A` 新增 支持绘制样式 transform、transform-origin [详情](https://github.com/ChrisChan13/wxml2canvas-2d/issues/4)
+  - **v1.1.8 (2025-01-22)**
+  1. `F` 修复 line-height 过高时表现错误 [详情](https://juejin.cn/post/7439556363104600079#comment)
+  - **v1.1.7 (2025-01-21)**
+  1. `F` 修复 组件嵌套于组件时绘制报错 [详情](https://developers.weixin.qq.com/community/develop/article/doc/0000eae9008c484fe262362c66b013?jumpto=comment&commentid=00024297c4c28081a9b2672a1654)
+  - **v1.1.6 (2025-01-14)**
+  1. `F` 修复 组件嵌套于组件时绘制报错 [详情](https://developers.weixin.qq.com/community/develop/article/doc/0000eae9008c484fe262362c66b013?jumpto=comment&commentid=00024297c4c28081a9b2672a1654)
+  - **v1.1.5 (2024-11-27)**
+  1. `A` 修复 iOS 平台 border-radius 表现错误 (iOS 角度单位与其他平台对齐) [详情](https://github.com/ChrisChan13/wxml2canvas-2d/issues/11)
+  - **v1.1.4 (2024-11-18)**
+  1. `U` 更新 优化部分常量变量设置
+  - **v1.1.3 (2024-11-16)**
+  1. `A` 新增 支持离屏画布模式
+  2. `A` 新增 支持导出 DataURI (Base64 编码)
+  - **v1.1.2 (2024-11-14)**
+  1. `F` 修复 text-align 表现错误
+  - **v1.1.1 (2024-11-14)**
+  1. `A` 新增 支持绘制样式 filter (仅 Windows 支持)
+  - **v1.1.0 (2024-11-11)**
+  1. `U` 更新 优化绘制流程
+  2. `A` 新增 支持绘制样式 letter-spacing (仅 Windows 支持)、word-spacing (仅 Windows 支持)
+  - **v1.0.10 (2024-11-11)**
+  1. `A` 新增 支持绘制样式 text-shadow [详情](https://github.com/ChrisChan13/wxml2canvas-2d/issues/10)
+  - **v1.0.9 (2024-11-01)**
+  1. `A` 新增 支持绘制换行符 [详情](https://github.com/ChrisChan13/wxml2canvas-2d/issues/9)
+  2. `F` 修复 单行文字 text-overflow 表现错误
+  3. `A` 新增 支持绘制样式 text-indent
+  - **v1.0.8 (2024-07-02)**
+  1. `U` 更新 优化节点信息查询逻辑
+  2. `U` 更新 兼容部分设备字体表现差异 [详情](https://github.com/ChrisChan13/wxml2canvas-2d/issues/7)
+  - **v1.0.7 (2024-04-22)**
+  1. `A` 新增 支持绘制样式 background-clip
+  - **v1.0.6 (2024-04-19)**
+  1. `F` 修复 Windows 平台画布缩放错误 [详情](https://github.com/ChrisChan13/wxml2canvas-2d/issues/5)
+  2. `A` 新增 支持导出时统一尺寸
+  - **v1.0.5 (2024-04-16)**
+  1. `A` 新增 支持绘制样式 radial-gradient
+  2. `A` 新增 支持绘制样式 conic-gradient (仅 Windows 支持)
+  - **v1.0.4 (2024-04-11)**
+  1. `U` 更新 修改元素的盒子模型绘制逻辑
+  - **v1.0.3 (2024-04-11)**
+  1. `F` 修复 绘制背景图报错
+  - **v1.0.2 (2024-04-10)**
+  1. `A` 新增 支持绘制样式 background-image、background-size、background-repeat、background-position [详情](https://github.com/ChrisChan13/wxml2canvas-2d/issues/1)
+  2. `U` 更新 优化 Gradient 对象创建逻辑
+  - **v1.0.1 (2024-03-16)**
+  1. `F` 修复 iOS 平台表现错误 (iOS 不支持 Path2D) [详情](https://github.com/ChrisChan13/wxml2canvas-2d/issues/3)
+  2. `A` 新增 支持绘制样式 linear-gradient
+  - **v1.0.0 (2023-12-19)**
+  1. `A` 新增 支持绘制元素 image、view、text、button
+  2. `A` 新增 支持绘制样式 定位相关属性、padding、background-color、opacity、border-radius
+  3. `A` 新增 支持绘制样式 font-weight、font-size、font-family、text-align、line-height、text-overflow、color
+  4. `A` 新增 支持绘制样式 box-shadow (单个阴影)
+  5. `A` 新增 支持绘制样式 border (四边一致)、border-width、border-color
+  6. `A` 新增 支持绘制样式 border-style (dashed 和 solid)
+  7. `A` 新增 支持绘制内容缩放
+  8. `A` 新增 支持导出 tempFile 临时文件
+</details>
 
 ## Demo
 
