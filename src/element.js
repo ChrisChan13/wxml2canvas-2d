@@ -15,8 +15,8 @@ const getComputedRect = (nodesRef) => {
   if (right !== 'auto') right = parseFloat(right);
   if (top !== 'auto') top = parseFloat(top);
   if (bottom !== 'auto') bottom = parseFloat(bottom);
-  width = parseFloat(width);
-  height = parseFloat(height);
+  if (width !== 'auto') width = parseFloat(width);
+  if (height !== 'auto') height = parseFloat(height);
   return {
     left, right, bottom, top, width, height,
   };

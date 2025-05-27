@@ -341,46 +341,104 @@ class Canvas {
       /** 元素底外边距 与 内容底外边距 的差值 */
       const diffBottom = element.bottom - content.bottom;
 
-      ctx.ellipse(
-        content.left + radius.leftTop - diffLeft,
-        content.top + radius.topLeft - diffTop,
-        radius.leftTop - diffLeft,
-        radius.topLeft - diffTop,
-        -180 * unitRotateAngle,
-        0,
-        Math.PI / 2,
-      );
-      ctx.lineTo(content.right - radius.rightTop + diffRight, content.top);
-      ctx.ellipse(
-        content.right - radius.rightTop + diffRight,
-        content.top + radius.topRight - diffTop,
-        radius.topRight - diffTop,
-        radius.rightTop - diffRight,
-        -90 * unitRotateAngle,
-        0,
-        Math.PI / 2,
-      );
-      ctx.lineTo(content.right, content.bottom - radius.bottomRight + diffBottom);
-      ctx.ellipse(
-        content.right - radius.rightBottom + diffRight,
-        content.bottom - radius.bottomRight + diffBottom,
-        radius.rightBottom - diffRight,
-        radius.bottomRight - diffBottom,
-        0,
-        0,
-        Math.PI / 2,
-      );
-      ctx.lineTo(content.right - radius.rightBottom + diffRight, content.bottom);
-      ctx.ellipse(
-        content.left + radius.leftBottom - diffLeft,
-        content.bottom - radius.bottomLeft + diffBottom,
-        radius.bottomLeft - diffBottom,
-        radius.leftBottom - diffLeft,
-        90 * unitRotateAngle,
-        0,
-        Math.PI / 2,
-      );
-      ctx.lineTo(content.left, content.top + radius.topLeft - diffTop);
+      /** 元素左顶圆角 */
+      const leftTopRadius = radius.leftTop - diffLeft;
+      /** 元素顶左圆角 */
+      const topLeftRadius = radius.topLeft - diffTop;
+      /** 元素顶右圆角 */
+      const topRightRadius = radius.topRight - diffTop;
+      /** 元素右顶圆角 */
+      const rightTopRadius = radius.rightTop - diffRight;
+      /** 元素右底圆角 */
+      const rightBottomRadius = radius.rightBottom - diffRight;
+      /** 元素底右圆角 */
+      const bottomRightRadius = radius.bottomRight - diffBottom;
+      /** 元素底左圆角 */
+      const bottomLeftRadius = radius.bottomLeft - diffBottom;
+      /** 元素左底圆角 */
+      const leftBottomRadius = radius.leftBottom - diffLeft;
+
+      if (leftTopRadius === topLeftRadius) {
+        ctx.moveTo(content.left, content.top + topLeftRadius);
+        ctx.arcTo(
+          content.left,
+          content.top,
+          content.left + leftTopRadius,
+          content.top,
+          topLeftRadius,
+        );
+      } else {
+        ctx.ellipse(
+          content.left + leftTopRadius,
+          content.top + topLeftRadius,
+          leftTopRadius,
+          topLeftRadius,
+          -180 * unitRotateAngle,
+          0,
+          Math.PI / 2,
+        );
+      }
+      ctx.lineTo(content.right - rightTopRadius, content.top);
+      if (rightTopRadius === topRightRadius) {
+        ctx.arcTo(
+          content.right,
+          content.top,
+          content.right,
+          content.top + topRightRadius,
+          topRightRadius,
+        );
+      } else {
+        ctx.ellipse(
+          content.right - rightTopRadius,
+          content.top + topRightRadius,
+          topRightRadius,
+          rightTopRadius,
+          -90 * unitRotateAngle,
+          0,
+          Math.PI / 2,
+        );
+      }
+      ctx.lineTo(content.right, content.bottom - bottomRightRadius);
+      if (rightBottomRadius === bottomRightRadius) {
+        ctx.arcTo(
+          content.right,
+          content.bottom,
+          content.right - rightBottomRadius,
+          content.bottom,
+          bottomRightRadius,
+        );
+      } else {
+        ctx.ellipse(
+          content.right - rightBottomRadius,
+          content.bottom - bottomRightRadius,
+          rightBottomRadius,
+          bottomRightRadius,
+          0,
+          0,
+          Math.PI / 2,
+        );
+      }
+      ctx.lineTo(content.left + leftBottomRadius, content.bottom);
+      if (leftBottomRadius === bottomLeftRadius) {
+        ctx.arcTo(
+          content.left,
+          content.bottom,
+          content.left,
+          content.bottom - bottomLeftRadius,
+          bottomLeftRadius,
+        );
+      } else {
+        ctx.ellipse(
+          content.left + leftBottomRadius,
+          content.bottom - bottomLeftRadius,
+          bottomLeftRadius,
+          leftBottomRadius,
+          90 * unitRotateAngle,
+          0,
+          Math.PI / 2,
+        );
+      }
+      ctx.lineTo(content.left, content.top + topLeftRadius);
     } else {
       ctx.rect(
         content.left,

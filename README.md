@@ -317,6 +317,8 @@ Page({
   <summary><b>更新日志</b></summary>
   <br>
 
+  - **v1.3.1 (2025-05-27)**
+  1. `U` 更新 兼容部分情况圆角表现差异
   - **v1.3.0 (2025-04-28)**
   1. `A` 新增 支持绘制样式 border-left、border-right、border-top、border-bottom
   2. `A` 新增 支持绘制样式 border-style (double)
