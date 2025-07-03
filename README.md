@@ -6,7 +6,7 @@
 
 ### npm
 
-使用 npm 构建前，请先阅读微信官方的 [npm 支持](https://developers.weixin.qq.com/miniprogram/dev/devtools/npm.html)
+使用 npm 构建前，请先阅读微信官方的 [npm 支持](https://developers.weixin.qq.com/miniprogram/dev/devtools/npm.html)。
 
 ```bash
 # 通过 npm 安装
@@ -27,7 +27,7 @@ npm i wxml2canvas-2d -S --production
   }
 }
 ```
-2. 在页面中编写 wxml 结构，将要生成画布内容的**根节点**用名为 `wxml2canvas-container` 的样式类名称标记，将该根节点内部**需要生成画布内容的节点**用名为 `wxml2canvas-item` 的样式类名称标记（文字类节点需在对应节点声明 `data-text` 属性，并传入文字内容）。上述两个样式类名称可以自定义，只需将对应名称传入 `wxml2canvas` 组件的对应属性参数即可；
+2. 在页面中编写 wxml 结构，将要生成画布内容的**根节点**用名为 `wxml2canvas-container` 的样式类名称标记，将该根节点内部**需要生成画布内容的节点**用名为 `wxml2canvas-item` 的样式类名称标记（文字类节点需在对应节点声明 `data-text` 属性，并传入文字内容）。上述两个样式类名称可以自定义，只需将对应名称传入 `wxml2canvas-2d` 组件的对应属性参数即可；
 ```html
 <!-- pages/index/index.wxml -->
 <view class="wxml2canvas-container box">
@@ -87,43 +87,39 @@ Page({
   <tr>
     <th rowspan=2></th>
     <th rowspan=2>说明</th>
-    <th colspan=5>参数</th>
+    <th colspan=3>参数</th>
   </tr>
   <tr>
     <th>属性</th>
-    <th>类型</th>
     <th>默认值</th>
     <th>说明</th>
   </tr>
   <tr>
-    <td rowspan=2>draw</td>
+    <td rowspan=2>draw(page?: PageObject, component?: ComponentObject)</td>
     <td rowspan=2>绘制画布内容</td>
     <td>page</td>
-    <td>PageObject</td>
     <td>当前页面实例</td>
     <td>组件所在页面实例</td>
   </tr>
   <tr>
     <td>component</td>
-    <td>ComponentObject</td>
     <td>-</td>
     <td>组件所在组件实例</td>
   </tr>
   <tr>
-    <td>toTempFilePath</td>
+    <td>toTempFilePath(original?: Boolean)</td>
     <td>导出画布至临时路径</td>
     <td>original</td>
-    <td>Boolean</td>
     <td>true</td>
-    <td>是否使用实机渲染尺寸<br>true：各设备像素比不同，导出结果尺寸不同<br>false：以 750px 为标准，与 WXSS 表现一致</td>
+    <td>是否使用实机渲染尺寸<br>true：各设备像素比不同，导出结果尺寸不同<br>false：以 750px 为标准，与 WXSS 一致</td>
   </tr>
   <tr>
-    <td>toDataURL</td>
+    <td>toDataURL()</td>
     <td>导出画布至 Data URI</td>
     <td colspan=4>-</td>
   </tr>
   <tr>
-    <td>getImageData</td>
+    <td>getImageData()</td>
     <td>提取画布的像素数据</td>
     <td colspan=4>-</td>
   </tr>
@@ -307,9 +303,9 @@ Page({
 
   - 微信新版 Canvas 2D 接口基本与 Web Canvas API 对齐，但仍有部分 API 存在差异，随着微信版本或基础库更新，或许会提高相应 API 的支持度
   - iOS 平台对于 Path2D 的支持度不足，此 repo 已去除 Path2D 的相关应用，转而使用普通路径，相对应的路径生成次数会增多，绘制时长有所增加，但不多
-  - 【已修复】 iOS 平台使用 CanvasContext.ellipse 以及 Path2D.ellipse 时，其中的参数 rotation 旋转角度所使用的角度单位不同：iOS 使用角度值，macOS 平台未知，其余使用弧度值
+  - 部分 iOS 平台使用 CanvasContext.ellipse 以及 Path2D.ellipse 时，其中的参数 rotation 旋转角度所使用的角度单位不同：iOS 使用角度值，macOS 平台未知，其余使用弧度值
   - 绘制文字元素时，各机型和各平台对于 font-size、font-weight、line-height 的实际表现与 CSS 中的表现有细微不同，此 repo 暂时使用常量比例进行换算对齐，未彻底解决
-  - 绘制元素的边框暂时只支持 solid 和 dashed 两种样式，其中 dashed 样式的边框使用 CanvasContext.setLineDash 实现，各机型和各平台的边框虚线间距表现均有差异，此 repo 暂时使用与边框宽度等比的间距表现虚线边框
+  - 绘制元素的边框暂时只支持 solid、dashed 和 double 三种样式，其中 dashed 样式的边框使用 CanvasContext.setLineDash 实现，各机型和各平台的边框虚线间距表现均有差异，此 repo 暂时使用与边框宽度等比的间距表现虚线边框
   - 微信新版 Canvas API 目前不支持绘制椭圆形径向渐变图案，此 repo 使用 CanvasContext.scale 对圆形径向渐变图案进行放大或缩小，以实现椭圆形径向渐变图案，而在 closest-corner 与 farthest-corner 模式下的椭圆形径向渐变中，目前还未找出 CSS 在绘制椭圆形径向渐变图案时的长轴与短轴的大小的计算规则，暂时使用常量比例进行换算对齐，未彻底解决
   - 锥形渐变图案目前仅微信开发者工具以及 Windows 平台支持，开发工具上锥形渐变角度的 0° 基准与 CSS 表现一致（即 12 点钟方向），起始角度参数的角度单位为弧度，Windows 平台上的 0° 基准为 3 点钟方向，起始角度参数的角度单位为角度，iOS 和 Android 均不支持 CanvasContext.createConicGradient API，macOS 平台未知
 </details>
@@ -394,6 +390,154 @@ Page({
   6. `A` 新增 支持绘制样式 border-style (dashed 和 solid)
   7. `A` 新增 支持绘制内容缩放
   8. `A` 新增 支持导出 tempFile 临时文件
+</details>
+
+## FAQ
+
+<details>
+  <summary><b>如何同时截取多个不同节点的图片？</b></summary>
+  <br>
+
+  当需要同时截取页面上不同节点多张不同图片的时候，可以用多个 `wxml2canvas-2d` 组件，各自为 `container-class` 以及 `item-class` 自定义不同的样式类名，并在对应节点的 `class` 中体现，如：
+  ```html
+    <!-- 需要截图的节点一 -->
+    <view class="container_1 box">
+      <view class="item_1 title" data-text="测试标题">测试标题</view>
+      <image class="item_1 image" src="/your-image-path.png" />
+      <view class="item_1 content" data-text="测试内容，长文本。。">测试内容，长文本。。</view>
+    </view>
+
+    <!-- 需要截图的节点二 -->
+    <view class="container_2 box">
+      <view class="item_2 title" data-text="测试标题">测试标题</view>
+      <image class="item_2 image" src="/your-image-path.png" />
+      <view class="item_2 content" data-text="测试内容，长文本。。">测试内容，长文本。。</view>
+    </view>
+
+    <!-- 节点一的 wxml2canvas-2d 组件 -->
+    <wxml2canvas id="canvas_1" container-class="container_1" item-class="item_1" />
+    <!-- 节点二的 wxml2canvas-2d 组件 -->
+    <wxml2canvas id="canvas_2" container-class="container_2" item-class="item_2" />
+  ```
+  ```javascript
+  Page({
+    // 同时截取节点一与节点二的图片
+    async captureAllNodes() {
+      const filePaths = await Promise.all(
+        this.captureNodeScreenshot('#canvas_1'),
+        this.captureNodeScreenshot('#canvas_2'),
+      );
+    },
+    async captureNodeScreenshot(id) {
+      const canvas = this.selectComponent(id);
+      await canvas.draw();
+      const filePath = await canvas.toTempFilePath();
+      return filePath;
+    },
+  });
+  ```
+</details>
+<details>
+  <summary><b>TypeError: Cannot read property 'draw' of null</b></summary>
+  <br>
+
+  此问题一般是由于调用 `draw` 方法时，`wxml2canvas-2d` 组件实例不存在于当前页面中。请检查页面 JSON 配置文件，是否配置了 `wxml2canvas-2d` 组件，以及页面中是否编写了 `<wxml2canvas>` 节点。
+</details>
+<details>
+  <summary><b>TypeError: Cannot read property 'width' of undefined</b></summary>
+  <br>
+
+  此问题一般是由于将 `wxml2canvas-2d` 组件封装于另一组件内，而调用 `draw` 方法时，没有将组件实例传入，导致查询不到 `wxml2canvas-2d` 节点。请参考“如何在自定义组件中使用 wxml2canvas-2d 组件”。
+</details>
+<details>
+  <summary><b>如何在自定义组件中使用 wxml2canvas-2d 组件？</b></summary>
+  <br>
+
+  将 `wxml2canvas-2d` 组件封装于自定义组件中时，由于小程序的节点查询方法需要传入对应的组件实例，所以 `draw` 方法支持传入页面或组件的实例。传参方式有：
+  ```javascript
+  // 一、默认使用当前页面实例，即不传参数
+  Page({
+    captureNodeScreenshot() {
+      const canvas = this.selectComponent('#wxml2canvas');
+      await canvas.draw();
+    },
+  });
+
+  // 二、传入页面实例，调用另一个页面的方法
+  Page({
+    captureNodeScreenshot() {
+      /** 上一个页面的页面实例 */
+      const page = getCurrentPages().slice(-2)[0]
+      const canvas = page.selectComponent('#wxml2canvas');
+      await canvas.draw(page);
+    },
+  });
+
+  // 三、传入组件实例，位于自定义组件内时必传
+  Component({
+    methods: {
+      captureNodeScreenshot() {
+        const canvas = this.selectComponent('#wxml2canvas');
+        await canvas.draw(this);
+      },
+    },
+  });
+  
+  // 四、待绘制节点位于组件内，传入组件实例
+  Page({
+    captureNodeScreenshot() {
+      const component = this.selectComponent('#yourComponent');
+      const canvas = this.selectComponent('#wxml2canvas');
+      await canvas.draw(this, component);
+    },
+  });
+  ```
+</details>
+<details>
+  <summary><b>为什么文本内容截图出来不一样？</b></summary>
+  <br>
+
+  关于文本内容，不同设备有不同的默认字体、行高、字重等影响文字在界面中表现的因素，而在将文字绘制于画布中时，这些差异也会被放大。因此，若画布渲染与界面渲染之间有细微的差异，属于正常现象，适当设置文字的字体、行高、字重等样式可以减少此类差异。
+</details>
+<details>
+  <summary><b>文本内容被截取、溢出缩略不正确、换行结果不正确？</b></summary>
+  <br>
+
+  上一个问题“为什么文本内容截图出来不一样？”中提到了不同设备之间文字的表现差异，这是其中一个对于此问题很大的影响因素，具体分为以下几种情况：
+
+  1. 文字未能渲染完整，末端发生了截取：`wxml2canvas-2d` 组件会获取元素在界面中渲染的宽高，并将渲染范围限制在该宽高范围内，超出的部分将不会渲染。由于界面与画布的文字表现存在差异，有可能出现界面上文字所占宽高小于画布上文字所占宽高，导致溢出部分被截取。
+  2. 文字缩略位置不一致或没有正常缩略：与情况 1 相似，界面与画布的表现差异影响了文字所占空间的大小，从而使缩略位置产生偏差。而没有正常缩略的情况与情况 3 相似，参考情况 3。
+  3. 多行文字没有换行或单行文字产生换行：不同语言的文字存在不同的分词规则，从而决定其文字在界面上的表现，如英文单词会在行内空间不足时提前换行以确保单词完整显示等等。`wxml2canvas-2d` 组件使用 `Intl.Segmenter` 处理分词，但该 API 支持范围有限。在不支持 `Intl.Segmenter` 的设备上将会调用简单的 polyfill 来模拟分词，该 polyfill 分词规则简单，因此误判率高，从而对换行结果产生了影响。
+
+  上述情况 1 的问题虽已经过计算优化，但仍无法覆盖所有语言文字字符组合的情况。情况 3 中 polyfill 的分词规则与 空格符（/x20）以及一部分英文标点字符相关，若分词规则有误，很大可能是由于文本中有大量的中英文数字或空格等字符的混合内容。若文本中空格较多，画布绘制与界面表现差距太大，可以尝试将 空格（/x20）替换为 空格（/xa0），此举将绕过部分 polyfill 的分词过滤。
+</details>
+<details>
+  <summary><b>为什么部分设备圆角绘制不正确？</b></summary>
+  <br>
+
+  这个问题目前仅在部分 iOS 设备中发现过，由于圆角使用了 `CanvasContext.ellipse` API 来绘制，而部分 iOS 设备的 `CanvasContext.ellipse` 方法实现不同，其中一个角度参数的描述单位不同，iOS 使用了角度为单位，而其他设备是正常的弧度单位。出现该问题的 iOS 设备范围暂时无法准确界定，无法得到有效的修复，实际过程中可以减少椭圆形圆角的使用，采用圆形圆角代替，避免出现该问题。
+</details>
+<details>
+  <summary><b>为什么单词间距和字符间距不生效？</b></summary>
+  <br>
+
+  单词间距（word-spacing）和字符间距（letter-spacing）目前发现仅在开发工具和 Windows 设备上有效，其他设备设置了对应的 Canvas 样式后没有起到任何效果。实际过程中尽量避免单词间距和字符间距的设置，否则可能会导致文字占用空间变小，绘制时产生截取。若必须控制间距，可将文字内容拆分为单词/字符，为每个单词/字符设置 margin 样式。
+</details>
+<details>
+  <summary><b>如何在 uni-app 与 Taro 中使用？</b></summary>
+  <br>
+
+  `wxml2canvas-2d` 组件可以在 uni-app 与 Taro 中使用，但跨平台的支持度有限，目前只支持微信小程序平台。
+  1. 在 uni-app 中使用：参考 [小程序自定义组件支持](https://uniapp.dcloud.net.cn/tutorial/miniprogram-subject.html)。
+  2. 在 Taro 中使用：参考 [Taro 使用原生模块](https://docs.taro.zone/docs/hybrid)。
+
+  需要注意的是，Taro 对于小程序 dataset 的模拟是在小程序的逻辑层实现的，并没有真正在模板设置这个属性。`wxml2canvas-2d` 组件渲染文本内容时需要对应的节点设置 `data-text` 属性，而 Taro 会忽略该属性，导致 `wxml2canvas-2d` 组件读取不到文本内容。Taro 提供了属性注入的方案，参考 [模板属性 dataset](https://docs.taro.zone/docs/vue-overall/#dataset)。
+</details>
+<details>
+  <summary><b>如何在 skyline 渲染引擎中使用？</b></summary>
+  <br>
+
+  非常抱歉，`wxml2canvas-2d` 目前无法在小程序 skyline 引擎中使用，因 skyline 引擎无法获取 `computedStyle`，导致无法在画布中绘制对应的样式。
 </details>
 
 ## Demo
