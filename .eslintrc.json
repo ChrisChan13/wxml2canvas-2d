@@ -29,6 +29,7 @@
     "no-underscore-dangle": "off",
     "no-param-reassign": "off",
     "no-await-in-loop": "off",
-    "no-fallthrough": "off"
+    "no-fallthrough": "off",
+    "no-nested-ternary": "off"
   }
 }

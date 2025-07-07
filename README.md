@@ -258,6 +258,19 @@ Page({
       <td colspan=2>transform-origin</td>
       <td>变形原点，支持</td>
     </tr>
+    <tr>
+      <td rowspan="3">text-decoration</td>
+      <td>text-decoration-line</td>
+      <td>文本装饰类型，支持</td>
+    </tr>
+    <tr>
+      <td>text-decoration-style</td>
+      <td>文本装饰样式，暂仅支持 solid、dashed 和 double</td>
+    </tr>
+    <tr>
+      <td>text-decoration-color</td>
+      <td>文本装饰颜色，支持</td>
+    </tr>
   </table>
 </details>
 <details>
@@ -313,6 +326,8 @@ Page({
   <summary><b>更新日志</b></summary>
   <br>
 
+  - **v1.3.2 (2025-07-07)**
+  1. `A` 新增支持绘制样式 text-decoration、text-decoration-color、text-decoration-line、text-decoration-style (solid、dashed、double)
   - **v1.3.1 (2025-05-27)**
   1. `U` 更新 兼容部分情况圆角表现差异
   - **v1.3.0 (2025-04-28)**

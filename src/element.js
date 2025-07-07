@@ -360,6 +360,7 @@ Element.TEXT_COMPUTED_STYLE = [
   'font-family', 'font-size', 'font-weight', 'text-align',
   'line-height', 'text-overflow', 'color', 'text-indent',
   'text-shadow', 'letter-spacing', 'word-spacing', 'direction',
+  'text-decoration-style', 'text-decoration-line', 'text-decoration-color',
 ];
 /** 图片节点特殊属性名 */
 Element.IMAGE_PROPERTIES = [

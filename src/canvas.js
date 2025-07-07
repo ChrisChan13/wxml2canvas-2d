@@ -877,15 +877,58 @@ class Canvas {
       ) + ( // 文字居中位置偏移
         (isTextRightAlign ? -1 : 1) * (isTextCentered ? lineWidth / 2 : 0)
       );
-      const lineTop = content.top + lines * lineHeight + (
+      const lineTop = content.top + lines * lineHeight;
+      const lineTopOffset = (
         lineHeight - fontSize * FONT_SIZE_OFFSET
       ) / 2;
       ctx.fillText(
         lineText,
         lineLeft,
-        lineTop,
+        lineTop + lineTopOffset,
         lineWidth,
       );
+
+      /** 文字实际宽度 */
+      const textWidth = Math.min(ctx.measureText(lineText).width, lineWidth);
+      let decorLines = element['text-decoration-line'];
+      if (decorLines && decorLines !== 'none') {
+        const decorStyle = element['text-decoration-style'];
+        const decorColor = element['text-decoration-color'];
+        ctx.strokeStyle = decorColor;
+        ctx.lineWidth = 2 / RPX_RATIO;
+        if (decorStyle === 'dashed') {
+          ctx.setLineDash([4, 4]);
+        }
+
+        decorLines = decorLines.split(' ').map((decor) => {
+          let decorLineLeft = lineLeft;
+          let decorLineTop = lineTop;
+          if (isTextCentered) {
+            decorLineLeft -= textWidth / 2;
+          } else if (isTextRightAlign) {
+            decorLineLeft -= textWidth;
+          }
+          if (decor === 'line-through') {
+            decorLineTop += lineTopOffset + fontSize / 2;
+          } else if (decor === 'underline') {
+            decorLineTop += lineTopOffset + fontSize;
+          }
+          ctx.beginPath();
+          ctx.moveTo(decorLineLeft, decorLineTop);
+          ctx.lineTo(decorLineLeft + textWidth, decorLineTop);
+          ctx.closePath();
+          ctx.stroke();
+          if (decorStyle === 'double') {
+            decorLineTop += 2 * ctx.lineWidth;
+            ctx.beginPath();
+            ctx.moveTo(decorLineLeft, decorLineTop);
+            ctx.lineTo(decorLineLeft + textWidth, decorLineTop);
+            ctx.closePath();
+            ctx.stroke();
+          }
+          return decor;
+        });
+      }
 
       lineText = '';
     }
