@@ -783,16 +783,13 @@ class Canvas {
     ctx.wordSpacing = element['word-spacing'];
 
     const fontSize = parseFloat(element['font-size']);
-    const isTextCentered = element['text-align'] === 'center';
-    const isTextLeftAlign = element['text-align'] === 'left';
-    const isTextRightAlign = element['text-align'] === 'right';
     /** 文本方向向右 */
     const isTextRTL = element.direction === 'rtl';
-    if (isTextRTL && !isTextCentered && !isTextLeftAlign) {
-      ctx.textAlign = 'right';
-    }
+    const isTextCentered = element['text-align'] === 'center';
+    const isTextRightAlign = element['text-align'] === 'right' || (isTextRTL && element['text-align'] === 'start');
     /** 是否文本反向，安卓与 IOS 渲染时文字顺序颠倒 */
-    const shouldReverse = IS_ANDROID || IS_IOS;
+    const shouldReverse = isTextRTL && (IS_ANDROID || IS_IOS);
+    ctx.textAlign = isTextRightAlign ? 'right' : isTextCentered ? 'center' : 'left';
 
     /** 文字行高 */
     let lineHeight;
@@ -850,10 +847,10 @@ class Canvas {
       /** 是否内容最后一行 */
       const isLastLine = (lines + 1) === maxLines;
       if (isLastLine && lastIndex < segments.length - 1 && element['text-overflow'] === 'ellipsis') {
-        let ellipsisLineText = isTextRTL && !shouldReverse ? `...${lineText}` : `${lineText}...`;
+        let ellipsisLineText = !shouldReverse ? `...${lineText}` : `${lineText}...`;
         while (ctx.measureText(ellipsisLineText).width > lineWidth) {
           lineText = lineText.slice(0, -1);
-          ellipsisLineText = isTextRTL && !shouldReverse ? `...${lineText}` : `${lineText}...`;
+          ellipsisLineText = !shouldReverse ? `...${lineText}` : `${lineText}...`;
         }
         lineText = ellipsisLineText;
       } else if (isLastLine && segment) {
@@ -864,21 +861,21 @@ class Canvas {
           lastSegment = segment;
         }
       }
-      if (isTextRTL && !shouldReverse && lastSegment && !lastSegment.isWord) {
+      if (!shouldReverse && lastSegment && !lastSegment.isWord) {
         lineText = lineText.slice(0, -lastSegment.value.length);
         lineText = `${lastSegment.value}${lineText}`;
       }
       lineText = lineText.trim();
-      if (isTextRTL && shouldReverse) {
+      if (shouldReverse) {
         lineText = segmentText(lineText).reverse().join('');
       }
 
       const lineLeft = (
-        (isTextRightAlign || (isTextRTL && !isTextLeftAlign)) ? content.right : content.left
+        isTextRightAlign ? content.right : content.left
       ) + ( // 首行缩进位置偏移
-        ((isTextRTL && !isTextLeftAlign) ? -1 : 1) * (lines === 0 ? textIndent : 0)
+        (isTextRightAlign ? -1 : 1) * (lines === 0 ? textIndent : 0)
       ) + ( // 文字居中位置偏移
-        ((isTextRTL && !isTextLeftAlign) ? -1 : 1) * (isTextCentered ? lineWidth / 2 : 0)
+        (isTextRightAlign ? -1 : 1) * (isTextCentered ? lineWidth / 2 : 0)
       );
       const lineTop = content.top + lines * lineHeight + (
         lineHeight - fontSize * FONT_SIZE_OFFSET
