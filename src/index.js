@@ -5,8 +5,10 @@ import Canvas from './canvas';
  * 绘制 wxml 元素
  * @param {Canvas} canvas 画布对象
  * @param {Element} element wxml 元素
+ * @param {PageObject} page 页面实例对象
+ * @param {ComponentObject} component 组件实例对象
  */
-const drawElement = async (canvas, element) => {
+const drawElement = async (canvas, element, page, component) => {
   // 设置画布的当前 wxml 元素上下文（必要）
   canvas.setElement(element);
 
@@ -22,6 +24,8 @@ const drawElement = async (canvas, element) => {
     }
   } else if (element.dataset.text) {
     canvas.drawText();
+  } else if ('canvasId' in element) {
+    await canvas.drawCanvas(component ?? page);
   }
   canvas.drawBorder();
   canvas.resetTransform();
@@ -91,12 +95,14 @@ Component({
           ...Element.TEXT_PROPERTIES,
           ...Element.IMAGE_PROPERTIES,
           ...Element.VIDEO_PROPERTIES,
+          ...Element.CANVAS_PROPERTIES,
         ],
         computedStyle: [
           ...Element.COMMON_COMPUTED_STYLE,
           ...Element.TEXT_COMPUTED_STYLE,
           ...Element.IMAGE_COMPUTED_STYLE,
           ...Element.VIDEO_COMPUTED_STYLE,
+          ...Element.CANVAS_COMPUTED_STYLE,
         ],
       };
       const [container] = await Element.getNodesRef(`.${containerClass}`, fields, page, component);
@@ -111,14 +117,14 @@ Component({
 
       // 绘制最外层容器 wxml 元素
       const containerElement = new Element(container);
-      await drawElement(canvas, containerElement);
+      await drawElement(canvas, containerElement, page, component);
 
       // 绘制内层各 wxml 元素
       // eslint-disable-next-line no-restricted-syntax
       for (const item of items) {
         const itemElement = new Element(item);
         // eslint-disable-next-line no-await-in-loop
-        await drawElement(canvas, itemElement);
+        await drawElement(canvas, itemElement, page, component);
       }
     },
     /**

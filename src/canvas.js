@@ -756,6 +756,28 @@ class Canvas {
     this.restoreContext();
   }
 
+  /**
+   * 绘制 wxml 的 canvas 元素
+   * @param {Object} instance canvas 元素所在页面/组件实例
+   */
+  async drawCanvas(instance) {
+    const { element } = this;
+    const payload = {
+      fileType: 'png',
+    };
+    if (element.type === '2d') {
+      Object.assign(payload, {
+        canvas: element.node,
+      });
+    } else {
+      Object.assign(payload, {
+        canvasId: element.canvasId,
+      });
+    }
+    const { tempFilePath } = await wx.canvasToTempFilePath(payload, instance);
+    await this.drawImage(tempFilePath);
+  }
+
   /** 绘制 wxml 的 text 元素 */
   drawText() {
     const { context: ctx, element } = this;

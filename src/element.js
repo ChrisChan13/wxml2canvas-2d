@@ -374,6 +374,12 @@ Element.VIDEO_PROPERTIES = [
 ];
 /** 视频节点特殊样式名 */
 Element.VIDEO_COMPUTED_STYLE = [];
+/** 视频节点特殊属性名 */
+Element.CANVAS_PROPERTIES = [
+  'type', 'canvas-id',
+];
+/** 画布节点特殊属性名 */
+Element.CANVAS_COMPUTED_STYLE = [];
 
 /**
  * 获取 WXML 节点信息对象
@@ -386,25 +392,23 @@ Element.VIDEO_COMPUTED_STYLE = [];
 Element.getNodesRef = (selector, fields, page, component) => new Promise((resolve) => {
   const query = page.createSelectorQuery();
   if (component) { query.in(component); }
-  const nodesRef = [];
-  const computedRects = [];
   const refs = query.selectAll(selector);
-  refs.fields(fields, (res) => {
-    nodesRef.push(...res);
-  });
+  refs.fields(fields);
   refs.fields({
     computedStyle: Element.CONSTANT_COMPUTED_STYLE,
-  }, (res) => {
-    computedRects.push(...res);
   });
-  query.exec(() => {
-    computedRects.map((item, index) => {
-      Object.assign(nodesRef[index], {
-        __computedRect: getComputedRect(item),
+  refs.node();
+  query.exec((res) => {
+    if (res && res.length > 0) {
+      res[0].map((item, index) => {
+        Object.assign(item, {
+          __computedRect: getComputedRect(res[1][index]),
+          ...res[2][index],
+        });
+        return item;
       });
-      return item;
-    });
-    resolve(nodesRef);
+    }
+    resolve(res[0]);
   });
 });
 

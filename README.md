@@ -294,6 +294,7 @@ Page({
   - [x] 支持 `text-indent`、`text-shadow` 等文字样式
   - [x] 支持 `filter` 滤镜效果
   - [x] 支持 `video` 标签
+  - [x] 支持 `canvas` 标签
 </details>
 <details>
   <summary><b>使用注意</b></summary>
@@ -326,8 +327,10 @@ Page({
   <summary><b>更新日志</b></summary>
   <br>
 
+  - **v1.3.3 (2025-07-08)**
+  1. `A` 新增 支持绘制元素 canvas
   - **v1.3.2 (2025-07-07)**
-  1. `A` 新增支持绘制样式 text-decoration、text-decoration-color、text-decoration-line、text-decoration-style (solid、dashed、double)
+  1. `A` 新增 支持绘制样式 text-decoration、text-decoration-color、text-decoration-line、text-decoration-style (solid、dashed、double)
   - **v1.3.1 (2025-05-27)**
   1. `U` 更新 兼容部分情况圆角表现差异
   - **v1.3.0 (2025-04-28)**
