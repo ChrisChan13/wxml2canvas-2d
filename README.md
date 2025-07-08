@@ -295,6 +295,7 @@ Page({
   - [x] 支持 `filter` 滤镜效果
   - [x] 支持 `video` 标签
   - [x] 支持 `canvas` 标签
+  - [x] 支持渲染自定义组件
 </details>
 <details>
   <summary><b>使用注意</b></summary>
@@ -327,6 +328,8 @@ Page({
   <summary><b>更新日志</b></summary>
   <br>
 
+  - **v1.3.4 (2025-07-08)**
+  1. `A` 新增 支持绘制自定义组件
   - **v1.3.3 (2025-07-08)**
   1. `A` 新增 支持绘制元素 canvas
   - **v1.3.2 (2025-07-07)**
@@ -412,6 +415,33 @@ Page({
 
 ## FAQ
 
+<details>
+  <summary><b>如何绘制自定义组件？</b></summary>
+  <br>
+
+  `wxml2canvas-2d` 支持绘制自定义组件，自定义组件内也可以使用其他自定义组件。
+  1. 自定义组件的元素节点需要声明 `id` 以及 `data-component` 属性，当然 **样式类** `wxml2canvas-item` 也不可缺少。请确保 `id` 在文档中不重复，`data-component` 为 `Boolean` 类型，只需声明即为 `true` 值。
+  2. 自定义组件内的元素节点与页面内的元素节点无异，为需要渲染的元素节点用样式类 `wxml2canvas-item` 标记即可。
+  3. 自定义组件 `slot` 插槽内的元素节点与页面内的元素节点无异，同上。
+  4. 支持渲染自定义组件内的子自定义组件，为子自定义组件进行如上同样的设置即可。
+
+  参考如下：
+  ```html
+  <!-- 自定义组件中的内容 -->
+  <view class="wxml2canvas-item box">
+    <view class="wxml2canvas-item title" data-text="测试标题">测试标题</view>
+    <image class="wxml2canvas-item image" src="/your-image-path.png" />
+    <slot></slot>
+  </view>
+
+  <!-- 页面使用自定义组件 -->
+  <view class="wxml2canvas-container container">
+    <my-component id="my-component" data-component class="wxml2canvas-item">
+      <view class="wxml2canvas-item content" data-text="测试内容，长文本。。">测试内容，长文本。。</view>
+    </my-component>
+  </view>
+  ```
+</details>
 <details>
   <summary><b>如何同时截取多个不同节点的图片？</b></summary>
   <br>

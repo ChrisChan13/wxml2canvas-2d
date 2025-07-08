@@ -87,6 +87,7 @@ Component({
         containerClass, itemClass, scale, offscreen,
       } = this.data;
       const fields = {
+        id: true,
         size: true,
         rect: true,
         dataset: true,
@@ -110,21 +111,33 @@ Component({
         canvasWidth: container.width * scale,
         canvasHeight: container.height * scale,
       });
-      const items = await Element.getNodesRef(`.${containerClass} .${itemClass}`, fields, page, component);
+      const nodes = await Element.getNodesRef(`.${containerClass} .${itemClass}`, fields, page, component);
 
       const canvas = this.canvas = new Canvas(...(offscreen ? [this] : [this, '#wxml2canvas']));
       await canvas.init(container, scale);
 
-      // 绘制最外层容器 wxml 元素
-      const containerElement = new Element(container);
-      await drawElement(canvas, containerElement, page, component);
-
+      nodes.unshift(container);
+      await this.drawElements(nodes, fields, component ?? page);
+    },
+    /**
+     * 绘制元素节点合集
+     * @param {Array} elements 元素节点合集
+     * @param {Object} fields 元素节点相关信息
+     * @param {Object} parent 父节点实例
+     */
+    async drawElements(elements, fields, parent) {
+      const { itemClass } = this.data;
       // 绘制内层各 wxml 元素
       // eslint-disable-next-line no-restricted-syntax
-      for (const item of items) {
+      for (const item of elements) {
         const itemElement = new Element(item);
-        // eslint-disable-next-line no-await-in-loop
-        await drawElement(canvas, itemElement, page, component);
+        if (item.dataset.component) {
+          const child = parent.selectComponent(`#${item.id}`);
+          const childElements = await Element.getNodesRef(`.${itemClass}`, fields, child);
+          await this.drawElements(childElements, fields, child);
+        } else {
+          await drawElement(this.canvas, itemElement, parent);
+        }
       }
     },
     /**
