@@ -130,10 +130,48 @@ Page({
 ### 其他
 
 <details>
+  <summary><b>WXML 组件支持情况</b></summary>
+  <br>
+
+  > 仅能获取组件自身的样式内容，无法获取组件的伪元素等样式内容
+
+  <table>
+    <tr>
+      <th>名称</th>
+      <th>说明</th>
+    </tr>
+    <tr>
+      <th>view</th>
+      <th>视图容器，支持</th>
+    </tr>
+    <tr>
+      <th>text</th>
+      <th>文本，支持</th>
+    </tr>
+    <tr>
+      <th>button</th>
+      <th>按钮，支持</th>
+    </tr>
+    <tr>
+      <th>image</th>
+      <th>图片，支持</th>
+    </tr>
+    <tr>
+      <th>video</th>
+      <th>视频，支持</th>
+    </tr>
+    <tr>
+      <th>canvas</th>
+      <th>画布，支持</th>
+    </tr>
+
+  </table>
+</details>
+<details>
   <summary><b>CSS 属性支持情况</b></summary>
   <br>
 
-  > 基础属性：position, width，height，padding、margin 等定位布局相关属性不谈
+  > 基础定位布局相关属性 left、width、padding、margin 等均支持
 
   <table>
     <tr>
