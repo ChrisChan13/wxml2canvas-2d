@@ -141,28 +141,28 @@ Page({
       <th>说明</th>
     </tr>
     <tr>
-      <th>view</th>
-      <th>视图容器，支持</th>
+      <td>view</td>
+      <td>视图容器，支持</td>
     </tr>
     <tr>
-      <th>text</th>
-      <th>文本，支持</th>
+      <td>text</td>
+      <td>文本，支持</td>
     </tr>
     <tr>
-      <th>button</th>
-      <th>按钮，支持</th>
+      <td>button</td>
+      <td>按钮，支持</td>
     </tr>
     <tr>
-      <th>image</th>
-      <th>图片，支持</th>
+      <td>image</td>
+      <td>图片，支持</td>
     </tr>
     <tr>
-      <th>video</th>
-      <th>视频，支持</th>
+      <td>video</td>
+      <td>视频，支持</td>
     </tr>
     <tr>
-      <th>canvas</th>
-      <th>画布，支持</th>
+      <td>canvas</td>
+      <td>画布，支持</td>
     </tr>
 
   </table>
