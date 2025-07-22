@@ -16,13 +16,13 @@ const drawElement = async (canvas, element, page, component) => {
   canvas.drawBoxShadow();
   canvas.drawBackgroundColor();
   await canvas.drawBackgroundImage();
-  if (element.src) {
-    if (element.objectFit) {
+  if ('src' in element) {
+    if ('objectFit' in element) {
       await canvas.drawVideo();
     } else {
       await canvas.drawImage();
     }
-  } else if (element.dataset.text) {
+  } else if ('text' in element.dataset) {
     canvas.drawText();
   } else if ('canvasId' in element) {
     await canvas.drawCanvas(component ?? page);
