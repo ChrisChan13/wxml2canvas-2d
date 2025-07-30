@@ -21,6 +21,8 @@ export const IS_ANDROID = SYS_PLATFORM === 'android';
 export const IS_DEVTOOL = SYS_PLATFORM === 'devtools';
 /** 是否为 Windows 平台 */
 export const IS_WINDOWS = SYS_PLATFORM === 'windows';
+/** 是否为移动设备 */
+export const IS_MOBILE = IS_ANDROID || IS_IOS;
 /** 设备像素与 750px 设计图比例 */
 export const RPX_RATIO = 750 / SYS_WIDTH;
 /** 三角函数值 转换 弧度 换算比例 */

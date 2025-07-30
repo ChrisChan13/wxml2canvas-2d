@@ -366,6 +366,8 @@ Page({
   <summary><b>更新日志</b></summary>
   <br>
 
+  - **v1.3.5 (2025-07-30)**
+  1. `F` 修复 部分情况下文字错乱
   - **v1.3.4 (2025-07-08)**
   1. `A` 新增 支持绘制自定义组件
   - **v1.3.3 (2025-07-08)**
@@ -522,6 +524,20 @@ Page({
     },
   });
   ```
+</details>
+<details>
+  <summary><b>Error: set height/width out of range: xxxx > xxxx</b></summary>
+  <br>
+
+  此问题为微信对 2D Canvas 的高度/宽度限制，在不同设备中具体的限制大小有所不同，根据设备的像素比，以 4096 为基数的倍数作为限制大小。
+  若触发了此类限制，且由 `wxml2canvas-2d` 组件渲染的内容相对固定，即宽高变化不大，可以传入组件参数 `scale` 对画布进行缩小。比较好的方案为根据设备的像素比按比例缩放，但需注意缩小后导出图片的质量有所降低。
+  若需要渲染的内容过多，且宽高无法确定，推荐将内容分段渲染，使用多个 `wxml2canvas-2d` 组件渲染不同段落的内容，最后将所有导出的图片，使用第三方库合成图片，或将所有图片按序拼接在一个旧版 Canvas 画布中并导出。
+</details>
+<details>
+  <summary><b>Error: The height/width xxxx has exceeded the limit 4096</b></summary>
+  <br>
+
+  此问题与上一个问题相同，均为微信对 2D Canvas 的高度/宽度限制，区别在于此类报错信息存在于旧基础库版本中，该限制为固定高度限制。参考上一问题。
 </details>
 <details>
   <summary><b>TypeError: Cannot read property 'draw' of null</b></summary>

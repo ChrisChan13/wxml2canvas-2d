@@ -1,7 +1,7 @@
 import {
   DEFAULT_LINE_HEIGHT, FONT_SIZE_OFFSET,
   SYS_DPR, RPX_RATIO, LINE_BREAK_SYMBOL,
-  IS_ANDROID, IS_IOS, VIDEO_POSTER_MODES,
+  IS_MOBILE, VIDEO_POSTER_MODES,
   POSITIONS, DOUBLE_LINE_RATIO,
 } from './constants';
 import { drawGradient } from './gradient';
@@ -809,8 +809,6 @@ class Canvas {
     const isTextRTL = element.direction === 'rtl';
     const isTextCentered = element['text-align'] === 'center';
     const isTextRightAlign = element['text-align'] === 'right' || (isTextRTL && element['text-align'] === 'start');
-    /** 是否文本反向，安卓与 IOS 渲染时文字顺序颠倒 */
-    const shouldReverse = isTextRTL && (IS_ANDROID || IS_IOS);
     ctx.textAlign = isTextRightAlign ? 'right' : isTextCentered ? 'center' : 'left';
 
     /** 文字行高 */
@@ -869,10 +867,10 @@ class Canvas {
       /** 是否内容最后一行 */
       const isLastLine = (lines + 1) === maxLines;
       if (isLastLine && lastIndex < segments.length - 1 && element['text-overflow'] === 'ellipsis') {
-        let ellipsisLineText = !shouldReverse ? `...${lineText}` : `${lineText}...`;
+        let ellipsisLineText = isTextRTL && !IS_MOBILE ? `...${lineText}` : `${lineText}...`;
         while (ctx.measureText(ellipsisLineText).width > lineWidth) {
           lineText = lineText.slice(0, -1);
-          ellipsisLineText = !shouldReverse ? `...${lineText}` : `${lineText}...`;
+          ellipsisLineText = isTextRTL && !IS_MOBILE ? `...${lineText}` : `${lineText}...`;
         }
         lineText = ellipsisLineText;
       } else if (isLastLine && segment) {
@@ -883,12 +881,12 @@ class Canvas {
           lastSegment = segment;
         }
       }
-      if (!shouldReverse && lastSegment && !lastSegment.isWord) {
+      if (isTextRTL && !IS_MOBILE && lastSegment && !lastSegment.isWord) {
         lineText = lineText.slice(0, -lastSegment.value.length);
         lineText = `${lastSegment.value}${lineText}`;
       }
       lineText = lineText.trim();
-      if (shouldReverse) {
+      if (isTextRTL && IS_MOBILE) {
         lineText = segmentText(lineText).reverse().join('');
       }
 
