@@ -874,12 +874,9 @@ class Canvas {
         }
         lineText = ellipsisLineText;
       } else if (isLastLine && segment) {
-        // 处理部分因计算偏差导致文字溢出的情况
-        if (ctx.measureText(lineText + segment.value).width - lineWidth
-          <= ctx.measureText(segment.value).width / 3) {
-          lineText += segment.value;
-          lastSegment = segment;
-        }
+        // 因画布与页面文字表现不一致，溢出内容放置于末行
+        lineText += segment.value;
+        lastSegment = segment;
       }
       if (isTextRTL && !IS_MOBILE && lastSegment && !lastSegment.isWord) {
         lineText = lineText.slice(0, -lastSegment.value.length);
