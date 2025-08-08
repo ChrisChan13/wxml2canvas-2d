@@ -22,7 +22,7 @@ const drawElement = async (canvas, element, page, component) => {
     } else {
       await canvas.drawImage();
     }
-  } else if ('text' in element.dataset) {
+  } else if ('text' in element.dataset || 'icon' in element.dataset) {
     canvas.drawText();
   } else if ('canvasId' in element) {
     await canvas.drawCanvas(component ?? page);

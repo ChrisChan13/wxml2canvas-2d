@@ -334,6 +334,7 @@ Page({
   - [x] 支持 `video` 标签
   - [x] 支持 `canvas` 标签
   - [x] 支持渲染自定义组件
+  - [x] 支持渲染 iconfont 矢量图标
 </details>
 <details>
   <summary><b>使用注意</b></summary>
@@ -366,6 +367,8 @@ Page({
   <summary><b>更新日志</b></summary>
   <br>
 
+  - **v1.3.7 (2025-08-08)**
+  1. `A` 新增 支持绘制 iconfont 矢量图标
   - **v1.3.6 (2025-08-06)**
   1. `F` 修复 部分情况下文字缺失
   - **v1.3.5 (2025-07-30)**
@@ -482,6 +485,51 @@ Page({
       <view class="wxml2canvas-item content" data-text="测试内容，长文本。。">测试内容，长文本。。</view>
     </my-component>
   </view>
+  ```
+</details>
+<details>
+  <summary><b>如何绘制 iconfont 矢量图标？</b></summary>
+  <br>
+
+  `wxml2canvas-2d` 支持绘制 iconfont 矢量图标。与自定义字体类似，生成画布内容前需加载对应的矢量图标字体文件。此外，还需搭配 `data-icon` 属性传入对应图标的十六进制 Unicode 码，该码与 CSS 中对应的矢量图标字符码相同。
+
+  参考如下：
+  ```html
+  <view class="wxml2canvas-item box">
+    <view class="wxml2canvas-item title">
+      <!-- 十六进制的 Unicode 码 "xxxx" 或 "\xxxx" 均可 -->
+      <i class="wxml2canvas-item icon-title" data-icon="e996" />
+      <text class="wxml2canvas-item" data-text="测试标题">测试标题</text>
+    </view>
+  </view>
+  ```
+  ```css
+  @font-face {
+    font-family: 'iconfont';
+    src: url('data:font/ttf;charset=utf-8;base64,XXXXXXXXXXXXX') format('truetype');
+    /* 其他样式 */
+  }
+  [class^="icon-"], [class*=" icon-"] {
+    font-family: 'iconfont' !important;
+    /* 其他样式 */
+  }
+  .icon-title::before {
+    content: '\e996';
+  }
+  ```
+  ```javascript
+  Page({
+    async generateSharingCard() {
+      await wx.loadFontFace({
+        family: 'iconfont',
+        // 可以为 https 链接或者 Data URL
+        source: 'data:font/ttf;charset=utf-8;base64,XXXXXXXXXXXXX',
+        scopes: ['native'],
+      });
+      // 导出画布
+      // ...
+    },
+  });
   ```
 </details>
 <details>

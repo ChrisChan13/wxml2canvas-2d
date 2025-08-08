@@ -835,13 +835,19 @@ class Canvas {
      *
      * 向上取整避免行高过大，文字错位
      */
-    const maxLines = Math.max(Math.ceil(content.height / lineHeight), 1);
+    const maxLines = Math.max(Math.ceil(
+      Number(content.height / lineHeight).toFixed(1),
+    ), 1);
     // 消除行高计算偏差
     lineHeight = content.height / maxLines;
     /** 单行内容，逐行显示 */
     let lineText = '';
     /** 内容基本单位拆分 */
-    const segments = segmentTextIntoWords(element.dataset.text);
+    const segments = segmentTextIntoWords(
+      element.dataset.icon
+        ? String.fromCharCode(parseInt(element.dataset.icon, 16))
+        : element.dataset.text,
+    );
 
     let lines = 0;
     let lastIndex = 0;
