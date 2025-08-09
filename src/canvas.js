@@ -238,6 +238,30 @@ const getEquilateralTriangle = (x, y, l) => {
 };
 
 /**
+ * 变换矩阵逆运算，获取原始坐标
+ * @param {Number} m11 矩阵中第一行第一列的单元格
+ * @param {Number} m12 矩阵中第二行第一列的单元格
+ * @param {Number} m21 矩阵中第一行第二列的单元格
+ * @param {Number} m22 矩阵中第二行第二列的单元格
+ * @param {Number} m41 矩阵中第一行第三列的单元格
+ * @param {Number} m42 矩阵中第二行第三列的单元格
+ * @param {Number} xTransformed 变换后的 x 坐标
+ * @param {Number} yTransformed 变换后的 y 坐标
+ * @returns 原始坐标 (x, y)
+ */
+const inverseTransform = (m11, m12, m21, m22, m41, m42, xTransformed, yTransformed) => {
+  // 计算行列式
+  const det = m11 * m22 - m12 * m21;
+  if (det === 0) {
+    throw new Error('Transform is not invertible (determinant is zero)');
+  }
+  // 计算原始坐标
+  const x = (m22 * (xTransformed - m41) - m21 * (yTransformed - m42)) / det;
+  const y = (-m12 * (xTransformed - m41) + m11 * (yTransformed - m42)) / det;
+  return { x, y };
+};
+
+/**
  * 画布工具类
  *
  * 1.实例化：传入组件实例以及画布选择器
@@ -482,27 +506,27 @@ class Canvas {
 
   /** 设置 wxml 元素的变换矩阵 */
   setTransform() {
-    const { context: ctx, element, container } = this;
+    const { context: ctx, element } = this;
     const { transform } = element;
     if (!transform || transform === 'none') return;
+    const [m11, m12, m21, m22, m41, m42] = transform.slice(7).slice(0, -1).split(', ');
+    // 变换后的中心点
+    const xTransformed = element.left + element.width / 2;
+    const yTransformed = element.top + element.height / 2;
+    // 变换前的中心点
+    const { x, y } = inverseTransform(
+      m11, m12, m21, m22, m41, m42, xTransformed, yTransformed,
+    );
     // 变换前的节点信息
     Object.assign(element, {
-      ...element.__computedRect,
-      left: container.left + element.__computedRect.left,
-      top: container.top + element.__computedRect.top,
-      right: container.left + element.__computedRect.width,
-      bottom: container.top + element.__computedRect.height,
+      left: x - element.__computedRect.width / 2,
+      top: y - element.__computedRect.height / 2,
+      right: x + element.__computedRect.width / 2,
+      bottom: y + element.__computedRect.height / 2,
+      width: element.__computedRect.width,
+      height: element.__computedRect.height,
     });
-    let [originX, originY] = element['transform-origin'].split(' ');
-    originX = parseFloat(originX);
-    originY = parseFloat(originY);
-    const [m11, m12, m21, m22, m41, m42] = transform.slice(7).slice(0, -1).split(', ');
-    // 变换中心点偏移
-    const offsetX = container.left + originX;
-    const offsetY = container.top + originY;
-    ctx.translate(offsetX, offsetY);
     ctx.transform(m11, m12, m21, m22, m41, m42);
-    ctx.translate(-offsetX, -offsetY);
     ctx.save();
   }
 
