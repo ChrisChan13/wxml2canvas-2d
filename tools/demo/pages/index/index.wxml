@@ -1,28 +1,16 @@
 <view class="container">
-  <view class="example">
-    <view class="canvas wxml2canvas-container" catchtouchstart="onCanvasTouch" catchtouchend="onCanvasLeave">
-      <image src="{{tempImage}}" mode="widthFix" class="wxml2canvas {{isCompare && 'compared'}}" />
-      <view class="canvas-title wxml2canvas-item" data-text="测试😀标题">测试😀标题</view>
-      <image class="canvas-image wxml2canvas-item" src="/images/U3e6ny.jpg" mode="aspectFill" />
-      <view class="canvas-row">
-        <view class="canvas-qrcode">
-          <image class="qrcode-image wxml2canvas-item" src="/images/qrcode.png" />
-        </view>
-        <view class="canvas-content">
-          <view class="canvas-subtitle wxml2canvas-item" data-text="Some testing words">Some testing words</view>
-          <view class="canvas-descr wxml2canvas-item" data-text="填充测试内容填充测试内容填充测试内容填充测试内容填充测试内容填充测试内容填充测试内容">填充测试内容填充测试内容填充测试内容填充测试内容填充测试内容填充测试内容填充测试内容</view>
-          <view class="canvas-hint wxml2canvas-item" data-text="扫描左侧二维码">扫描左侧二维码</view>
-        </view>
-      </view>
-      <view class="canvas-bar wxml2canvas-item" />
-      <view class="canvas-badge wxml2canvas-item" />
-    </view>
-  </view>
   <view class="buttons">
-    <button catchtap="onDrawCanvas">生成画布内容</button>
-    <button disabled="{{!tempImage}}" catchtap="onPreviewCanvas">查看生成内容</button>
-    <button catchtap="onLoadFontFace">加载字体测试</button>
+    <button bindtap="onNavigation" data-url="/pages/basic/index">基础示例</button>
+    <button bindtap="onNavigation" data-url="/pages/video/index">绘制视频节点示例</button>
+    <button bindtap="onNavigation" data-url="/pages/canvas/index">绘制 Canvas 节点示例</button>
+    <button bindtap="onNavigation" data-url="/pages/font/index">自定义字体示例</button>
+    <button bindtap="onNavigation" data-url="/pages/iconfont/index">IconFont 图标示例</button>
+    <button bindtap="onNavigation" data-url="/pages/multiple/index">并发绘制示例</button>
+    <button bindtap="onNavigation" data-url="/pages/package/index">自定义组件内示例</button>
+    <button bindtap="onNavigation" data-url="/pages/component/index">绘制自定义组件示例</button>
+    <button bindtap="onNavigation" data-url="/pages/overflow/index">绘制超长节点示例</button>
+    <button bindtap="onNavigation" data-url="/pages/snapshot/index">完整页面截图示例</button>
+    <button bindtap="onNavigation" data-url="/pages/snapshot-2/index">完整页面截图示例-2</button>
+    <button bindtap="onNavigation" data-url="/pages/snapshot-3/index">完整页面截图示例-3</button>
   </view>
 </view>
-
-<wxml2canvas id="wxml2canvas" />

@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "绘制自定义组件示例",
+  "usingComponents": {
+    "comp": "./comp",
+    "wxml2canvas": "/components/wxml2canvas-2d/index"
+  }
+}

@@ -1,11 +1,23 @@
 {
   "pages":[
-    "pages/index/index"
+    "pages/index/index",
+    "pages/basic/index",
+    "pages/font/index",
+    "pages/video/index",
+    "pages/canvas/index",
+    "pages/iconfont/index",
+    "pages/component/index",
+    "pages/package/index",
+    "pages/multiple/index",
+    "pages/overflow/index",
+    "pages/snapshot/index",
+    "pages/snapshot-2/index",
+    "pages/snapshot-3/index"
   ],
   "window":{
     "backgroundTextStyle":"light",
     "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "WeChat",
+    "navigationBarTitleText": "wxml2canvas-2d",
     "navigationBarTextStyle":"black"
   }
 }

@@ -1,0 +1,236 @@
+/* pages/record/record.wxss */
+.records {
+  background-color: #f5f7fa;
+  padding-bottom: 100rpx;
+}
+
+/* 顶部导航 */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30rpx 40rpx;
+  background: linear-gradient(to right, #6e8cfa, #4d6df3);
+  color: #fff;
+}
+
+.header-title {
+  font-size: 36rpx;
+  font-weight: bold;
+}
+
+.header-filter {
+  display: flex;
+  align-items: center;
+  font-size: 28rpx;
+  padding: 8rpx 24rpx;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 30rpx;
+}
+
+.filter-icon {
+  width: 24rpx;
+  height: 24rpx;
+  margin-left: 8rpx;
+}
+
+/* 筛选弹窗 */
+.filter-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 120rpx;
+}
+
+.filter-options {
+  background-color: #fff;
+  width: 240rpx;
+  border-radius: 16rpx 0 0 16rpx;
+  padding: 20rpx 0;
+  box-shadow: -4rpx 0 20rpx rgba(0, 0, 0, 0.1);
+}
+
+.filter-option {
+  padding: 24rpx 40rpx;
+  font-size: 28rpx;
+  color: #666;
+}
+
+.filter-option.active {
+  color: #4d6df3;
+  font-weight: bold;
+  background-color: #f0f4ff;
+}
+
+/* 战绩概览 */
+.stats-card {
+  display: flex;
+  justify-content: space-around;
+  background-color: #fff;
+  margin: 20rpx 30rpx;
+  padding: 30rpx 0;
+  border-radius: 16rpx;
+  box-shadow: 0 8rpx 24rpx rgba(110, 140, 250, 0.1);
+}
+
+.stats-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stats-value {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.stats-value.win {
+  color: #4d6df3;
+}
+
+.stats-value.lose {
+  color: #ff6b6b;
+}
+
+.stats-label {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 10rpx;
+}
+
+/* 对局列表 */
+.record-list {
+  padding: 0 30rpx;
+}
+
+.record-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+  border-radius: 0 16rpx 16rpx 0;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+.record-item.win {
+  border-left: 8rpx solid #4d6df3;
+}
+
+.record-item.lose {
+  border-left: 8rpx solid #ff6b6b;
+}
+
+.record-item.draw {
+  border-left: 8rpx solid #ffcc00;
+}
+
+.record-left {
+  display: flex;
+  align-items: center;
+}
+
+.game-mode-icon {
+  width: 80rpx;
+  height: 80rpx;
+  margin-right: 20rpx;
+}
+
+.game-mode {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.game-time {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 8rpx;
+}
+
+.record-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.result-badge {
+  font-size: 24rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 30rpx;
+  margin-bottom: 10rpx;
+}
+
+.win .result-badge {
+  background-color: #e6eeff;
+  color: #4d6df3;
+}
+
+.lose .result-badge {
+  background-color: #ffebeb;
+  color: #ff6b6b;
+}
+
+.draw .result-badge {
+  background-color: #fff8e6;
+  color: #ffcc00;
+}
+
+.score {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.duration {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 8rpx;
+}
+
+/* 无数据提示 */
+.no-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 0;
+}
+
+.no-data-icon {
+  width: 200rpx;
+  height: 200rpx;
+  opacity: 0.6;
+  margin-bottom: 30rpx;
+}
+
+.no-data-text {
+  font-size: 28rpx;
+  color: #999;
+}
+
+/* 底部购物车样式 */
+.footer-share {
+  position: fixed;
+  right: 40rpx;
+  bottom: 80rpx;
+  width: 100rpx;
+  height: 100rpx;
+  background-color: #ff4f94;
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: 700;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4rpx 20rpx rgba(255, 79, 148, 0.5);
+}

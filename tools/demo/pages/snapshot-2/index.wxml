@@ -1,0 +1,70 @@
+<!-- pages/record/record.wxml -->
+<view class="records snapshot">
+  <!-- 顶部导航 -->
+  <view class="header node">
+    <view class="header-title node" data-text="对战记录">对战记录</view>
+    <view class="header-filter node" bindtap="showFilter" data-text="{{filterText}}">{{filterText}}</view>
+  </view>
+  
+  <!-- 筛选弹窗 -->
+  <view class="filter-modal" wx:if="{{showFilterModal}}">
+    <view class="filter-options">
+      <view class="filter-option {{activeFilter === 'all' ? 'active' : ''}}" 
+            data-value="all" bindtap="changeFilter">全部</view>
+      <view class="filter-option {{activeFilter === 'win' ? 'active' : ''}}" 
+            data-value="win" bindtap="changeFilter">胜利</view>
+      <view class="filter-option {{activeFilter === 'lose' ? 'active' : ''}}" 
+            data-value="lose" bindtap="changeFilter">失败</view>
+      <view class="filter-option {{activeFilter === 'draw' ? 'active' : ''}}" 
+            data-value="draw" bindtap="changeFilter">平局</view>
+    </view>
+  </view>
+  
+  <!-- 战绩概览 -->
+  <view class="stats-card node">
+    <view class="stats-item">
+      <view class="stats-value node" data-text="{{totalCount}}">{{totalCount}}</view>
+      <view class="stats-label node" data-text="总场次">总场次</view>
+    </view>
+    <view class="stats-item">
+      <view class="stats-value win node" data-text="{{winCount}}">{{winCount}}</view>
+      <view class="stats-label node" data-text="胜场">胜场</view>
+    </view>
+    <view class="stats-item">
+      <view class="stats-value lose node" data-text="{{loseCount}}">{{loseCount}}</view>
+      <view class="stats-label node" data-text="败场">败场</view>
+    </view>
+    <view class="stats-item">
+      <view class="stats-value node" data-text="{{winRate}}%">{{winRate}}%</view>
+      <view class="stats-label node" data-text="胜率">胜率</view>
+    </view>
+  </view>
+  
+  <!-- 对局列表 -->
+  <view class="record-list">
+    <view class="record-item {{item.result}} node" wx:for="{{filteredRecords}}" wx:key="id">
+      <view class="record-left">
+        <image class="game-mode-icon node" src="{{item.modeIcon}}"></image>
+        <view class="game-info">
+          <view class="game-mode node" data-text="{{item.mode}}">{{item.mode}}</view>
+          <view class="game-time node" data-text="{{item.time}}">{{item.time}}</view>
+        </view>
+      </view>
+      <view class="record-right">
+        <view class="result-badge node" data-text="{{item.resultText}}">{{item.resultText}}</view>
+        <view class="score node" data-text="{{item.score}}">{{item.score}}</view>
+        <view class="duration node" data-text="{{item.duration}}">{{item.duration}}</view>
+      </view>
+    </view>
+    
+    <view class="no-data" wx:if="{{filteredRecords.length === 0}}">
+      <image src="/images/qrcode.png" class="no-data-icon"></image>
+      <view class="no-data-text">暂无对战记录</view>
+    </view>
+  </view>
+  
+  <!-- 底部分享图标 -->
+  <view class="footer-share" bindtap="onPageShare">分享</view>
+</view>
+
+<wxml2canvas id="wxml2canvas" container-class="snapshot" item-class="node" />

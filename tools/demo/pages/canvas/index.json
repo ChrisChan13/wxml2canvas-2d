@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "绘制 Canvas 节点示例",
+  "usingComponents": {
+    "wxml2canvas": "/components/wxml2canvas-2d/index"
+  }
+}

@@ -1,0 +1,31 @@
+<view class="container">
+  <view class="example">
+    <view wx:if="{{outputImage}}" class="example-hint">{{isCompare ? '生成' : '原'}}内容</view>
+    <view class="canvas wxml2canvas-container" catchtouchstart="onCanvasTouch" catchtouchend="onCanvasLeave">
+      <image src="{{outputImage}}" mode="widthFix" class="wxml2canvas {{isCompare && 'compared'}}" />
+      <view class="canvas-title wxml2canvas-item" data-text="这是大标题">这是大标题</view>
+      <image class="canvas-image wxml2canvas-item" src="/images/U3e6ny.jpg" mode="aspectFill" />
+      <view class="canvas-row">
+        <view class="canvas-qrcode">
+          <image class="qrcode-image wxml2canvas-item" src="/images/qrcode.png" />
+        </view>
+        <comp
+          title="这是组件小标题"
+          content="填充测试内容填充测试内容填充测试内容填充测试内容填充测试内容"
+          class="wxml2canvas-item"
+          data-component
+          id="comp"
+        >
+          <view class="canvas-hint wxml2canvas-item" data-text="扫描左侧二维码">扫描左侧二维码</view>
+        </comp>
+      </view>
+    </view>
+    <view wx:if="{{outputImage}}" class="example-hint">↑↑ 按住卡片实时对比 ↑↑</view>
+  </view>
+  <view class="buttons">
+    <button catchtap="onDrawCanvas">生成画布内容</button>
+    <button disabled="{{!outputImage}}" catchtap="onPreviewCanvas">查看生成内容</button>
+  </view>
+</view>
+
+<wxml2canvas id="wxml2canvas" />

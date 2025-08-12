@@ -1,0 +1,47 @@
+<!-- pages/index/index.wxml -->
+<view class="products snapshot">
+  <!-- 顶部搜索栏 -->
+  <view class="search-bar node">
+    <view class="search-input placeholder-style node" data-text="搜索心仪商品...">搜索心仪商品...</view>
+    <image class="search-icon node" src="/images/qrcode.png"></image>
+  </view>
+  
+  <!-- 轮播图 -->
+  <swiper class="banner node" autoplay interval="3000" circular bindchange="bannerChange">
+    <swiper-item wx:for="{{banners}}" wx:key="id" class="banner-item">
+      <image class="banner-image {{activeBanner === index ? 'node' : ''}}" src="{{item.image}}" mode="aspectFill"></image>
+    </swiper-item>
+  </swiper>
+  
+  <!-- 分类标签 -->
+  <scroll-view class="category-scroll node" scroll-x>
+    <view class="category-item {{activeCategory === index ? 'active' : ''}} node" 
+          wx:for="{{categories}}" wx:key="id" bindtap="switchCategory" data-index="{{index}}" data-text="{{item.name}}">
+      {{item.name}}
+    </view>
+  </scroll-view>
+  
+  <!-- 商品列表 -->
+  <view class="product-list node">
+    <view class="product-item node" wx:for="{{products}}" wx:key="id" bindtap="goToDetail" data-id="{{item.id}}">
+      <image class="product-image node" src="{{item.image}}" mode="aspectFill"></image>
+      <view class="product-info node">
+        <view class="product-title node" data-text="{{item.title}}">{{item.title}}</view>
+        <view class="product-desc node" data-text="{{item.desc}}">{{item.desc}}</view>
+        <view class="product-price node">
+          <text class="current-price node" data-text="¥{{item.price}}">¥{{item.price}}</text>
+          <text class="original-price node" wx:if="{{item.originalPrice}}" data-text="¥{{item.originalPrice}}">¥{{item.originalPrice}}</text>
+        </view>
+        <view class="product-actions node">
+          <image class="cart-icon node" src="/images/qrcode.png" bindtap="addToCart" data-id="{{item.id}}"></image>
+          <view class="sold-count node" data-text="已售{{item.sold}}件">已售{{item.sold}}件</view>
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 底部分享图标 -->
+  <view class="footer-share" bindtap="onPageShare">分享</view>
+</view>
+
+<wxml2canvas id="wxml2canvas" container-class="snapshot" item-class="node" />

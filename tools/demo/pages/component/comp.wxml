@@ -1,0 +1,7 @@
+<view class="canvas-content">
+  <view class="canvas-subtitle wxml2canvas-item" data-text="{{title}}">{{title}}</view>
+  <view class="canvas-descr wxml2canvas-item" data-text="{{content}}">
+    <text>{{content}}</text>
+  </view>
+  <slot></slot>
+</view>

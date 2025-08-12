@@ -60,7 +60,7 @@ Page({
   },
 });
 ```
-5. 更多使用方式以及注意事项参考 [API](#api) 以及 [其他](#其他)；
+5. 更多使用方式以及注意事项参考 [API](#api) 以及 [其他](#其他)，或克隆此仓库查看更多示例；
 
 > **PS**：使用字体时，请注意在**生成画布内容前** [**加载对应的字体文件**](https://developers.weixin.qq.com/miniprogram/dev/api/ui/font/wx.loadFontFace.html)；部分平台如 Windows 可能不支持画布使用自定义字体（小程序基础库 [v3.6.6](https://developers.weixin.qq.com/miniprogram/dev/framework/release/#v3-6-6-2024-11-12) 及以上已修复）；离屏画布模式下，大部分设备均不支持画布使用自定义字体（小程序基础库 [v3.8.7](https://developers.weixin.qq.com/miniprogram/dev/framework/release/#v3-8-7-2025-05-27) 及以上已修复）。
 
@@ -700,5 +700,99 @@ Page({
 
 ## 效果预览
 
-![效果预览](screenshot-0.png)
-![效果预览](screenshot-1.png)
+<table>
+  <tr align="center">
+    <th width="33.33%">
+      <a href="tools/demo/pages/basic/">基础示例</a>
+    </th>
+    <th width="33.33%">
+      <a href="tools/demo/pages/video/">绘制视频节点示例</a>
+    </th>
+    <th width="33.33%">
+      <a href="tools/demo/pages/canvas/">绘制 Canvas 节点示例</a>
+    </th>
+  </tr>
+  <tr>
+    <td>
+      <img src="screenshots/screenshot_basic.jpg">
+    </td>
+    <td>
+      <img src="screenshots/screenshot_video.jpg">
+    </td>
+    <td>
+      <img src="screenshots/screenshot_canvas.jpg">
+    </td>
+  </tr>
+</table>
+<table>
+  <tr align="center">
+    <th width="33.33%">
+      <a href="tools/demo/pages/font/">自定义字体示例</a>
+    </th>
+    <th width="33.33%">
+      <a href="tools/demo/pages/iconfont/">IconFont 图标示例</a>
+    </th>
+    <th width="33.33%">
+      <a href="tools/demo/pages/multiple/">并发绘制示例</a>
+    </th>
+  </tr>
+  <tr>
+    <td>
+      <img src="screenshots/screenshot_font.jpg">
+    </td>
+    <td>
+      <img src="screenshots/screenshot_iconfont.jpg">
+    </td>
+    <td>
+      <img src="screenshots/screenshot_multiple.jpg">
+    </td>
+  </tr>
+</table>
+<table>
+  <tr align="center">
+    <th width="33.33%">
+      <a href="tools/demo/pages/package/">自定义组件内示例</a>
+    </th>
+    <th width="33.33%">
+      <a href="tools/demo/pages/component/">绘制自定义组件示例</a>
+    </th>
+    <th width="33.33%">
+      <a href="tools/demo/pages/overflow/">绘制超长节点示例</a>
+    </th>
+  </tr>
+  <tr>
+    <td>
+      <img src="screenshots/screenshot_package.jpg">
+    </td>
+    <td>
+      <img src="screenshots/screenshot_component.jpg">
+    </td>
+    <td>
+      <img src="screenshots/screenshot_overflow.jpg">
+    </td>
+  </tr>
+</table>
+<table>
+  <tr align="center">
+    <th width="33.33%">
+      <a href="tools/demo/pages/snapshot/">完整页面截图示例</a>
+    </th>
+    <th width="33.33%">
+      <a href="tools/demo/pages/snapshot-2/">完整页面截图示例-2</a>
+    </th>
+    <th width="33.33%">
+      <a href="tools/demo/pages/snapshot-3/">完整页面截图示例-3</a>
+    </th>
+  </tr>
+  <tr>
+    <td>
+      <img src="screenshots/screenshot_snapshot.jpg">
+    </td>
+    <td>
+      <img src="screenshots/screenshot_snapshot2.jpg">
+    </td>
+    <td>
+      <img src="screenshots/screenshot_snapshot3.jpg">
+    </td>
+  </tr>
+</table>

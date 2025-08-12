@@ -1,0 +1,6 @@
+{
+  "component": true,
+  "usingComponents": {
+    "wxml2canvas": "/components/wxml2canvas-2d/index"
+  }
+}

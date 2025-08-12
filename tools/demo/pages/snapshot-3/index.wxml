@@ -1,0 +1,61 @@
+<!-- pages/sales/sales.wxml -->
+<view class="dashboard snapshot">
+  <!-- 顶部标题和月份选择 -->
+  <view class="header">
+    <view class="title node" data-text="门店销售数据">门店销售数据</view>
+    <picker mode="date" fields="month" value="{{currentMonth}}" bindchange="changeMonth">
+      <view class="month-picker node" data-text="{{currentMonth}}">{{currentMonth}}</view>
+    </picker>
+  </view>
+  
+  <!-- 数据概览卡片 -->
+  <view class="overview-card node">
+    <view class="overview-item">
+      <view class="overview-value node" data-text="{{salesData.totalAmount}}">{{salesData.totalAmount}}</view>
+      <view class="overview-label node" data-text="总销售额">总销售额</view>
+    </view>
+    <view class="overview-item">
+      <view class="overview-value node" data-text="{{salesData.orderCount}}">{{salesData.orderCount}}</view>
+      <view class="overview-label node" data-text="订单数">订单数</view>
+    </view>
+    <view class="overview-item">
+      <view class="overview-value node" data-text="{{salesData.customerCount}}">{{salesData.customerCount}}</view>
+      <view class="overview-label node" data-text="客流量">客流量</view>
+    </view>
+    <view class="overview-item">
+      <view class="overview-value node" data-text="{{salesData.avgAmount}}">{{salesData.avgAmount}}</view>
+      <view class="overview-label node" data-text="客单价">客单价</view>
+    </view>
+  </view>
+  
+  <!-- 周销售趋势图 -->
+  <view class="chart-container node">
+    <view class="chart-title node" data-text="周销售趋势">周销售趋势</view>
+    <canvas canvas-id="weekChart" class="chart node"></canvas>
+  </view>
+  
+  <!-- 商品销售排行 -->
+  <view class="chart-container node">
+    <view class="chart-title node" data-text="热销商品 TOP5">热销商品 TOP5</view>
+    <canvas canvas-id="productChart" class="chart node"></canvas>
+  </view>
+  
+  <!-- 时段分析 -->
+  <view class="time-analysis node">
+    <view class="section-title node" data-text="时段分析">时段分析</view>
+    <view class="time-slots">
+      <view class="time-slot" wx:for="{{timeSlots}}" wx:key="time">
+        <view class="time node" data-text="{{item.time}}">{{item.time}}</view>
+        <view class="progress-bar node">
+          <view class="progress node" style="width: {{item.percent}}%; background-color: {{item.color}};"></view>
+        </view>
+        <view class="percent node" data-text="{{item.percent}}%">{{item.percent}}%</view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 底部分享图标 -->
+  <view class="footer-share" bindtap="onPageShare">分享</view>
+</view>
+
+<wxml2canvas id="wxml2canvas" container-class="snapshot" item-class="node" />

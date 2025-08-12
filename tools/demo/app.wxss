@@ -1,0 +1,137 @@
+.container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.custom-font {
+  font-family: 'QianTuXianMoTi';
+}
+.example {
+  width: 100%;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #F6F6F6;
+}
+.example-hint {
+  margin: 24rpx 0;
+  font-size: 26rpx;
+  color: #808080;
+}
+.swiper {
+  width: 100vw;
+  height: 700rpx;
+}
+.swiper-item {
+  display: flex;
+  justify-content: center;
+}
+.scroll {
+  width: 600rpx;
+  height: 70vh;
+}
+.canvas {
+  background: #FFF;
+  overflow: hidden;
+  width: 600rpx;
+  height: fit-content;
+  padding: 30rpx;
+  box-sizing: border-box;
+  position: relative;
+}
+.canvas.small {
+  width: 550rpx;
+}
+.wxml2canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 0;
+  z-index: -1;
+}
+.wxml2canvas.compared {
+  z-index: 1;
+}
+.canvas-title {
+  font-size: 36rpx;
+  font-weight: 800;
+  text-align: center;
+  color: #008AFE;
+  margin-bottom: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.canvas-image,
+.canvas-picture {
+  width: 100%;
+  height: 340rpx;
+  display: block;
+  border-radius: 20rpx;
+  margin-bottom: 20rpx;
+  overflow: hidden;
+}
+.canvas-row {
+  display: flex;
+  justify-content: space-between;
+}
+.canvas-qrcode {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 20rpx;
+}
+.qrcode-image {
+  box-sizing: border-box;
+  width: 150rpx;
+  height: 150rpx;
+  border-radius: 20rpx;
+  display: block;
+  padding: 10rpx;
+  border: 4rpx dashed #008AFE;
+}
+.canvas-content {
+  flex-grow: 1;
+  min-height: 150rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.canvas-subtitle {
+  display: flex;
+  align-items: center;
+  font-size: 30rpx;
+  color: #808080;
+  font-weight: 700;
+}
+.canvas-descr {
+  font-size: 28rpx;
+  color: #333;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.canvas-hint {
+  margin-top: 8rpx;
+  font-size: 20rpx;
+  color: #AFAFAF;
+}
+
+.buttons button {
+  width: 80vw;
+  font-size: 30rpx;
+  margin: 20rpx 0;
+}
+.output {
+  position: fixed;
+  left: -99999px;
+  top: -99999px;
+}

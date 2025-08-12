@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "自定义组件内示例",
+  "usingComponents": {
+    "comp": "./comp"
+  }
+}
