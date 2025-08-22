@@ -805,7 +805,7 @@ Page({
 
 |微信赞赏码|
 |:---:|
-|<img src="screenshots/donate_wechat.png" width="250" />|
+|<img src="screenshots/donate_wechat.png" width="350" />|
 |感谢您的慷慨赞赏！|
 
 > 请在赞赏时留言备注您的 GitHub ID 或昵称，我会铭记于心！
