@@ -796,3 +796,20 @@ Page({
     </td>
   </tr>
 </table>
+
+## 支持
+
+如果这个项目对您有所帮助，或者您希望支持我的持续开发，欢迎通过以下方式进行赞赏。
+
+您的支持就是我保持更新的最大动力！
+
+|微信赞赏码|
+|:---:|
+|<img src="screenshots/donate_wechat.png" width="250" />|
+|感谢您的慷慨赞赏！|
+
+> 请在赞赏时留言备注您的 GitHub ID 或昵称，我会铭记于心！
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=ChrisChan13/wxml2canvas-2d&type=Date)](https://star-history.com/#ChrisChan13/wxml2canvas-2d&Date)
